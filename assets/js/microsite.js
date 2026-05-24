@@ -69,8 +69,8 @@
             <div class="logo-aura">
               <img class="brand-logo" src="${escapeHtml(logo)}" alt="Logo Yayasan Indonesia Maju Gemilang" loading="eager">
             </div>
-            <p class="logo-caption">Indonesia Maju Gemilang</p>
-            <h1 class="brand-title">Yayasan<br>Indonesia Maju Gemilang</h1>
+            <p class="logo-caption">${escapeHtml(p.short_name || "Indonesia Maju Gemilang")}</p>
+            <h1 class="brand-title">${escapeHtml(p.display_name || "Yayasan Indonesia Maju Gemilang")}</h1>
             <div class="gold-divider"><span>◆</span></div>
             <p class="arabic-script">${escapeHtml(p.islamic_script)}</p>
             <p class="script-translation">“${escapeHtml(p.islamic_translation || "Dan tolong-menolonglah kamu dalam kebajikan dan takwa.")}”</p>
@@ -78,7 +78,7 @@
           </section>
 
           <section class="mission-card">
-            <div class="mission-medallion">☪</div>
+            <div class="mission-medallion">✦</div>
             <div class="mission-copy">
               <h2>${escapeHtml(p.tagline || "Bersama, Kita Bisa Mewujudkan Kebaikan")}</h2>
               <div class="mini-divider"><span>♥</span></div>
@@ -91,7 +91,7 @@
           </nav>
 
           <footer class="footer">
-            <span>© ${new Date().getFullYear()} Yayasan Indonesia Maju Gemilang</span>
+            <span>© ${new Date().getFullYear()} ${escapeHtml(p.display_name || "Yayasan Indonesia Maju Gemilang")}</span>
           </footer>
         </section>
 

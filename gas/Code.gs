@@ -108,7 +108,7 @@ function getStaticProfile(username) {
     display_name: "Yayasan Indonesia Maju Gemilang",
     short_name: "Indonesia Maju Gemilang",
     tagline: "Bersama, Kita Bisa Mewujudkan Kebaikan",
-    bio: "Setiap langkah kecil adalah bagian dari perubahan besar bagi sesama. Hadir untuk menebar kebaikan, memberdayakan umat, dan membangun masa depan yang gemilang.",
+    bio: "Hadir sebagai ruang kolaborasi kebaikan untuk memberdayakan umat, menebar manfaat, dan membangun masa depan yang gemilang dengan semangat kebersamaan.",
     logo_url: "/u/assets/img/logo-yimg.png",
     islamic_script: "وَتَعَاوَنُوا عَلَى الْبِرِّ وَالتَّقْوَى",
     islamic_translation: "Dan tolong-menolonglah kamu dalam kebajikan dan takwa.",
@@ -289,8 +289,11 @@ function parsePostBody(e) {
 
 function isValidToken(payload) {
   const token = String(payload.token || payload.api_token || "").trim();
-  const expected = String(PropertiesService.getScriptProperties().getProperty(PROP_API_TOKEN) || CONFIG.API_TOKEN).trim();
-  return Boolean(token) && token === expected;
+  const stored = String(PropertiesService.getScriptProperties().getProperty(PROP_API_TOKEN) || "").trim();
+  const fallback = String(CONFIG.API_TOKEN || "cakgup").trim();
+  // Password admin default tetap: cakgup. Jika Script Properties diisi,
+  // token tersebut juga diterima tanpa menonaktifkan password default.
+  return Boolean(token) && (token === fallback || (stored && token === stored));
 }
 
 function sanitizeUsername(value) {

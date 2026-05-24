@@ -14,7 +14,7 @@ window.CAKGUP_MICROSITE_CONFIG = {
     display_name: "Yayasan Indonesia Maju Gemilang",
     short_name: "Indonesia Maju Gemilang",
     tagline: "Bersama, Kita Bisa Mewujudkan Kebaikan",
-    bio: "Setiap langkah kecil adalah bagian dari perubahan besar bagi sesama. Hadir untuk menebar kebaikan, memberdayakan umat, dan membangun masa depan yang gemilang.",
+    bio: "Hadir sebagai ruang kolaborasi kebaikan untuk memberdayakan umat, menebar manfaat, dan membangun masa depan yang gemilang dengan semangat kebersamaan.",
     logo_url: "/u/assets/img/logo-yimg.png",
     islamic_script: "وَتَعَاوَنُوا عَلَى الْبِرِّ وَالتَّقْوَى",
     islamic_translation: "Dan tolong-menolonglah kamu dalam kebajikan dan takwa.",

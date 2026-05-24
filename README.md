@@ -62,3 +62,8 @@ CAKGUP_MICROSITE_API_TOKEN
 ```
 
 Fallback sementara masih `cakgup`.
+
+
+## Admin Dashboard
+
+Halaman admin tersedia pada `/u/admin`. Password default admin adalah `cakgup`. Dashboard admin difokuskan untuk mengelola komponen link: menambah, mengubah, mengaktifkan/nonaktifkan, dan menghapus link.

@@ -9,3 +9,7 @@ Perubahan:
 - Admin login token/password cakgup tetap dipertahankan.
 - Fitur admin tambah/edit/nonaktifkan/aktifkan/hapus link tetap dipertahankan.
 - Code.gs tetap sederhana dan hanya fokus pengelolaan link.
+
+Update v8:
+- Font ayat Arab diubah ke Reem Kufi melalui Google Fonts.
+- Ditambahkan fallback font Arab agar tetap terbaca jika font eksternal gagal dimuat.

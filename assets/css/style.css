@@ -17,6 +17,7 @@
   --shadow: 0 24px 70px rgba(0,0,0,0.34);
   --radius: 28px;
   --radius-lg: 38px;
+  --arabic-font: "Reem Kufi", "Noto Kufi Arabic", "Noto Naskh Arabic", Tahoma, Arial, sans-serif;
   --safe-bottom: env(safe-area-inset-bottom, 0px);
 }
 
@@ -281,6 +282,8 @@ img { max-width: 100%; display: block; }
   background: linear-gradient(90deg, transparent, rgba(227,190,113,.7), transparent);
 }
 .arabic-script {
+  font-family: var(--arabic-font);
+  font-weight: 500;
   margin: 16px auto 8px;
   font-size: clamp(26px, 4.5vw, 48px);
   color: var(--gold-soft);
@@ -1059,6 +1062,8 @@ img { max-width: 100%; display: block; }
   width: min(14vw, 76px);
 }
 .arabic-script {
+  font-family: var(--arabic-font);
+  font-weight: 500;
   width: min(100%, 680px);
   margin: 12px auto 8px !important;
   text-align: center !important;

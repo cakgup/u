@@ -56,9 +56,11 @@ function doPost(e) {
     if (action === "getmicrositelinks" || action === "getlinks" || action === "listlinks" || action === "listadmin") {
       const username = sanitizeUsername(body.username || CONFIG.DEFAULT_USERNAME);
       setupSheet();
-      return jsonOutput({ success: true, username: username, links: getLinks(username, true) });
+      return jsonOutput({ success: true, username: username, links: getLinks(username, true), slugs: listSlugs() });
     }
 
+    if (action === "listslugs" || action === "getslugs") return jsonOutput({ success: true, slugs: listSlugs() });
+    if (action === "renameslug" || action === "renameusername" || action === "updateslug") return jsonOutput(renameSlug(body));
     if (action === "savemicrositelink" || action === "savelink" || action === "upsertlink") return jsonOutput(saveLink(body));
     if (action === "deletemicrositelink" || action === "deletelink" || action === "hapuslink") return jsonOutput(deleteLink(body));
 
@@ -106,6 +108,54 @@ function clearLinksCache(username) {
   const cache = CacheService.getScriptCache();
   if (username) cache.remove("links_public_" + sanitizeUsername(username));
   cache.remove("links_public_" + CONFIG.DEFAULT_USERNAME);
+}
+
+
+function listSlugs() {
+  setupSheet();
+  const rows = readRows(getLinksSheet());
+  const set = {};
+  set[CONFIG.DEFAULT_USERNAME] = true;
+  rows.forEach(row => {
+    const slug = sanitizeUsername(row.username || CONFIG.DEFAULT_USERNAME);
+    if (slug) set[slug] = true;
+  });
+  return Object.keys(set).sort();
+}
+
+function renameSlug(body) {
+  setupSheet();
+  const oldSlug = sanitizeUsername(body.old_username || body.old_slug || body.from || CONFIG.DEFAULT_USERNAME);
+  const newSlug = sanitizeUsername(body.new_username || body.new_slug || body.to || "");
+  if (!oldSlug) return { success: false, message: "Slug lama tidak valid." };
+  if (!newSlug) return { success: false, message: "Slug baru tidak valid." };
+  if (oldSlug === newSlug) return { success: false, message: "Slug baru masih sama dengan slug lama." };
+
+  const lock = LockService.getScriptLock();
+  lock.waitLock(10000);
+  try {
+    const sheet = getLinksSheet();
+    const headers = getHeaders(sheet);
+    const usernameCol = headers.indexOf("username") + 1;
+    const updatedAtCol = headers.indexOf("updated_at") + 1;
+    if (usernameCol < 1 || sheet.getLastRow() < 2) return { success: true, message: "Slug baru siap digunakan.", updated: 0, old_username: oldSlug, new_username: newSlug, slugs: listSlugs() };
+    const values = sheet.getRange(2, usernameCol, sheet.getLastRow() - 1, 1).getValues();
+    let updated = 0;
+    const now = new Date().toISOString();
+    for (let i = 0; i < values.length; i++) {
+      if (sanitizeUsername(values[i][0] || CONFIG.DEFAULT_USERNAME) === oldSlug) {
+        const row = i + 2;
+        sheet.getRange(row, usernameCol).setValue(newSlug);
+        if (updatedAtCol > 0) sheet.getRange(row, updatedAtCol).setValue(now);
+        updated++;
+      }
+    }
+    clearLinksCache(oldSlug);
+    clearLinksCache(newSlug);
+    return { success: true, message: updated ? "Slug berhasil diubah." : "Slug baru siap digunakan.", updated: updated, old_username: oldSlug, new_username: newSlug, slugs: listSlugs() };
+  } finally {
+    lock.releaseLock();
+  }
 }
 
 function getLinks(username, includeInactive) {
@@ -276,7 +326,7 @@ function isValidToken(body) {
 
 function sanitizeUsername(value) {
   const text = String(value || CONFIG.DEFAULT_USERNAME).trim().toLowerCase()
-    .replace(/\s+/g, "-").replace(/_/g, "-").replace(/[^a-z0-9-]/g, "").replace(/-+/g, "-").replace(/^-|-$/g, "");
+    .replace(/\s+/g, "-").replace(/[^a-z0-9_-]/g, "").replace(/-+/g, "-").replace(/^-|-$/g, "");
   return text || CONFIG.DEFAULT_USERNAME;
 }
 

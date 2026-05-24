@@ -10,7 +10,7 @@ window.CAKGUP_MICROSITE_CONFIG = {
   PRAYER_SCHEDULE: {
     enabled: true,
     title: "Waktu Shalat",
-    city: "Kota Bekasi dan Sekitarnya",
+    city: "DKI Jakarta dan Sekitarnya",
     timezone: "Asia/Jakarta",
     api_base_url: "https://api.myquran.com/v2/sholat/jadwal/1301",
     cache_key: "cakgup_yimg_prayer_schedule"

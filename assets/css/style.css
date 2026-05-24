@@ -1621,3 +1621,68 @@ img { max-width: 100%; display: block; }
 .preview-screen .hero-panel {
   min-height: 540px !important;
 }
+
+
+/* Slug manager */
+.slug-manager { display: grid; gap: 14px; }
+.slug-current-card {
+  display: grid;
+  gap: 6px;
+  padding: 16px 18px;
+  border-radius: 20px;
+  background: linear-gradient(135deg, rgba(15, 78, 68, .12), rgba(227, 190, 113, .08));
+  border: 1px solid rgba(90, 23, 109, .12);
+}
+.slug-current-card .slug-label {
+  text-transform: uppercase;
+  letter-spacing: .12em;
+  font-size: 11px;
+  font-weight: 800;
+  color: rgba(70, 42, 18, .62);
+}
+.slug-current-card strong {
+  font-size: 26px;
+  color: #3b0751;
+}
+.slug-current-card a {
+  font-size: 14px;
+  color: #8a3d0b;
+  word-break: break-all;
+}
+.slug-help {
+  margin: -2px 0 0;
+  color: rgba(56, 42, 34, .70);
+  font-size: 14px;
+  line-height: 1.55;
+}
+.slug-form-grid { align-items: end; }
+
+
+/* v15: rapikan jarak hero agar tidak ada ruang kosong besar antara jadwal shalat dan link. */
+.hero-panel {
+  min-height: auto !important;
+  padding-bottom: clamp(24px, 4vw, 36px) !important;
+}
+.link-list {
+  margin-top: clamp(10px, 2vw, 16px) !important;
+}
+@media (max-width: 720px) {
+  .hero-panel {
+    min-height: auto !important;
+    padding-top: 28px !important;
+    padding-bottom: 22px !important;
+  }
+  .prayer-card {
+    margin-bottom: 0 !important;
+  }
+  .link-list {
+    margin-top: 10px !important;
+  }
+}
+.preview-screen .hero-panel {
+  min-height: auto !important;
+  padding-bottom: 18px !important;
+}
+.preview-screen .link-list {
+  margin-top: 8px !important;
+}

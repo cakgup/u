@@ -67,3 +67,14 @@ Fallback sementara masih `cakgup`.
 ## Admin Dashboard
 
 Halaman admin tersedia pada `/u/admin`. Password default admin adalah `cakgup`. Dashboard admin difokuskan untuk mengelola komponen link: menambah, mengubah, mengaktifkan/nonaktifkan, dan menghapus link.
+
+
+## Multi Slug Microsite
+
+Versi ini mendukung beberapa slug microsite. Admin dapat membuka `/u/admin`, memilih atau membuat slug baru seperti `microsite_lain`, lalu menyimpan link untuk slug tersebut. Halaman publik dapat diakses melalui:
+
+```text
+https://cakgup.github.io/u/microsite_lain
+```
+
+Slug mendukung huruf kecil, angka, tanda hubung (`-`), dan underscore (`_`).

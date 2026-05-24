@@ -67,9 +67,9 @@
             <div class="logo-aura">
               <img class="brand-logo" src="${escapeHtml(logo)}" alt="Logo Yayasan Indonesia Maju Gemilang" loading="eager">
             </div>
-            <section id="prayerSchedule" class="prayer-card" aria-label="Jadwal shalat Kota Bekasi dan sekitarnya">
+            <section id="prayerSchedule" class="prayer-card" aria-label="Jadwal shalat DKI Jakarta dan sekitarnya">
               <p class="prayer-kicker">Waktu Shalat untuk Daerah</p>
-              <h2 class="prayer-city">Kota Bekasi dan Sekitarnya</h2>
+              <h2 class="prayer-city">DKI Jakarta dan Sekitarnya</h2>
               <div class="prayer-next" aria-live="polite">
                 <span>
                   <small>Berikutnya</small>
@@ -100,7 +100,7 @@
 
         ${p.audio_enabled === false || String(p.audio_enabled).toLowerCase() === "false" ? "" : `
           <button id="audioFab" class="audio-fab" type="button" aria-label="Putar atau hentikan nasyid">♫</button>
-          <audio id="nasyidAudio" data-src="${escapeHtml(audioUrl)}" ${p.audio_loop === false || String(p.audio_loop).toLowerCase() === "false" ? "" : "loop"} preload="none"></audio>
+          <audio id="nasyidAudio" src="${escapeHtml(audioUrl)}" data-src="${escapeHtml(audioUrl)}" ${p.audio_loop === false || String(p.audio_loop).toLowerCase() === "false" ? "" : "loop"} autoplay playsinline preload="auto"></audio>
         `}
         <div id="snowLayer" class="snow-layer" aria-hidden="true"></div>
         <button id="shareFab" class="share-fab" type="button" aria-label="Bagikan halaman">↗</button>
@@ -139,26 +139,32 @@
     const button = document.getElementById("audioFab");
     if (!audio || !button) return;
 
+    const autoplayEnabled = profile.audio_autoplay !== false && String(profile.audio_autoplay).toLowerCase() !== "false";
     audio.volume = Number(profile.audio_volume || config.DEFAULT_PROFILE?.audio_volume || 0.34);
-    let attempted = false;
+    audio.muted = false;
+    audio.autoplay = autoplayEnabled;
+    audio.playsInline = true;
 
-    function refresh() { button.classList.toggle("is-playing", !audio.paused); }
-    async function playAudio() {
-      try {
-        if (!audio.src) {
-          audio.src = audio.dataset.src || "";
-          audio.load();
-        }
-        await audio.play();
-        refresh();
-      } catch (error) {
-        refresh();
+    function refresh() {
+      button.classList.toggle("is-playing", !audio.paused);
+    }
+
+    async function ensureSource() {
+      if (!audio.getAttribute("src")) {
+        audio.setAttribute("src", audio.dataset.src || "");
+        audio.load();
       }
     }
-    function tryAutoplay() {
-      if (attempted) return;
-      attempted = true;
-      playAudio();
+
+    async function playAudio() {
+      try {
+        await ensureSource();
+        await audio.play();
+      } catch (error) {
+        // Browser tertentu tetap menolak autoplay bersuara sampai ada interaksi pengguna.
+      } finally {
+        refresh();
+      }
     }
 
     button.addEventListener("click", async () => {
@@ -169,9 +175,14 @@
     audio.addEventListener("play", refresh);
     audio.addEventListener("pause", refresh);
 
-    if (profile.audio_autoplay !== false && String(profile.audio_autoplay).toLowerCase() !== "false") {
-      tryAutoplay();
-      ["click", "touchstart", "keydown", "scroll"].forEach((eventName) => {
+    if (autoplayEnabled) {
+      // Upaya autoplay langsung saat halaman dimuat.
+      playAudio();
+      requestAnimationFrame(playAudio);
+      window.addEventListener("pageshow", playAudio, { once: true });
+
+      // Fallback: jika browser memblokir autoplay, audio langsung diputar pada interaksi pertama.
+      ["pointerdown", "touchstart", "click", "keydown", "scroll"].forEach((eventName) => {
         window.addEventListener(eventName, playAudio, { once: true, passive: true });
       });
     }

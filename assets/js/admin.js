@@ -5,11 +5,39 @@
   const DEFAULT_USERNAME = config.DEFAULT_USERNAME || "yimg";
   const $ = (selector) => document.querySelector(selector);
 
-  const state = { links: [], editingId: "" };
+  const state = { links: [], slugs: [DEFAULT_USERNAME], currentSlug: DEFAULT_USERNAME, editingId: "" };
 
   function h(value) { return window.CakgupMicrosite.escapeHtml(value); }
   function token() { return window.CakgupAuth.getToken(); }
-  function publicProfile() { return { ...(config.DEFAULT_PROFILE || {}), username: DEFAULT_USERNAME }; }
+  function normalizeSlug(value) {
+    return String(value || "")
+      .trim()
+      .toLowerCase()
+      .replace(/\s+/g, "-")
+      .replace(/[^a-z0-9_-]/g, "")
+      .replace(/-+/g, "-")
+      .replace(/^-|-$/g, "") || DEFAULT_USERNAME;
+  }
+
+  function publicUrlFor(slug = state.currentSlug) {
+    return `${location.origin}${BASE_PATH}/${normalizeSlug(slug)}`;
+  }
+
+  function ensureSlugList(slug) {
+    const next = normalizeSlug(slug);
+    const merged = new Set([DEFAULT_USERNAME, next, ...(state.slugs || []).map(normalizeSlug)]);
+    state.slugs = [...merged].filter(Boolean).sort((a, b) => a.localeCompare(b));
+  }
+
+  function publicProfile() {
+    const slug = normalizeSlug(state.currentSlug || DEFAULT_USERNAME);
+    return {
+      ...(config.DEFAULT_PROFILE || {}),
+      id: slug,
+      username: slug,
+      microsite_url: publicUrlFor(slug)
+    };
+  }
 
   function renderLoginPage(message = "") {
     const root = $("#app");
@@ -73,7 +101,7 @@
               </div>
             </div>
             <div class="button-row top-actions">
-              <a class="outline-button" href="${BASE_PATH}/" target="_blank" rel="noopener">Buka Publik</a>
+              <a id="openPublicButton" class="outline-button" href="${publicUrlFor()}" target="_blank" rel="noopener">Buka Publik</a>
               <button id="reloadButton" class="secondary-button" type="button">Muat Ulang</button>
               <button id="logoutButton" class="ghost-button" type="button">Keluar</button>
             </div>
@@ -84,6 +112,11 @@
               <section class="admin-card action-strip">
                 <button class="primary-button" type="button" id="focusFormButton">Simpan Link</button>
                 <button class="soft-button" type="button" id="cancelEditButton">Batal Edit</button>
+              </section>
+
+              <section class="admin-card">
+                <h2>Slug / URL Microsite</h2>
+                ${renderSlugManager()}
               </section>
 
               <section class="admin-card">
@@ -115,6 +148,39 @@
     `;
     bindEvents();
     updatePreview();
+  }
+
+
+  function renderSlugManager() {
+    const current = normalizeSlug(state.currentSlug || DEFAULT_USERNAME);
+    ensureSlugList(current);
+    const options = state.slugs.map((slug) => `<option value="${h(slug)}" ${slug === current ? "selected" : ""}>${h(slug)}</option>`).join("");
+    return `
+      <div class="slug-manager">
+        <div class="slug-current-card">
+          <span class="slug-label">Slug aktif</span>
+          <strong>/${h(current)}</strong>
+          <a href="${publicUrlFor(current)}" target="_blank" rel="noopener">${h(publicUrlFor(current))}</a>
+        </div>
+        <div class="form-grid reference-form-grid slug-form-grid">
+          <div>
+            <label class="label" for="slugSelectInput">Pilih Slug Tersedia</label>
+            <select id="slugSelectInput" class="select">${options}</select>
+          </div>
+          <div>
+            <label class="label" for="slugInput">Add / Edit Slug</label>
+            <input id="slugInput" class="input" type="text" value="${h(current)}" placeholder="Contoh: microsite_lain">
+          </div>
+        </div>
+        <p class="slug-help">Gunakan huruf kecil, angka, tanda hubung (-), atau underscore (_). Contoh URL: <strong>${h(location.origin + BASE_PATH)}/microsite_lain</strong></p>
+        <div class="button-row admin-actions">
+          <button id="useSlugButton" class="secondary-button" type="button">Gunakan / Buat Slug</button>
+          <button id="renameSlugButton" class="outline-button" type="button">Ubah Slug Aktif</button>
+          <a id="openSlugLink" class="ghost-button" href="${publicUrlFor(current)}" target="_blank" rel="noopener">Buka URL Ini</a>
+        </div>
+        <p id="slugMessage" class="message hidden"></p>
+      </div>
+    `;
   }
 
   function renderLinkForm() {
@@ -221,6 +287,24 @@
       window.CakgupAuth.logout();
       renderLoginPage("Anda sudah keluar dari dashboard admin.");
     });
+
+    $("#slugSelectInput")?.addEventListener("change", async (event) => {
+      const slug = normalizeSlug(event.target.value || DEFAULT_USERNAME);
+      state.currentSlug = slug;
+      if ($("#slugInput")) $("#slugInput").value = slug;
+      await reloadLinks();
+    });
+
+    $("#useSlugButton")?.addEventListener("click", async () => {
+      const slug = normalizeSlug($("#slugInput")?.value || DEFAULT_USERNAME);
+      state.currentSlug = slug;
+      ensureSlugList(slug);
+      await reloadLinks();
+    });
+
+    $("#renameSlugButton")?.addEventListener("click", renameCurrentSlug);
+
+
     $("#reloadButton")?.addEventListener("click", () => renderAdminPage());
     $("#focusFormButton")?.addEventListener("click", () => $("#linkTitleInput")?.focus());
     $("#cancelEditButton")?.addEventListener("click", () => resetLinkForm());
@@ -250,8 +334,11 @@
     const root = $("#app");
     root.innerHTML = `<main class="admin-page admin-light"><div class="loading-screen"><div><div class="spinner"></div><p class="login-desc">Memuat daftar link...</p></div></div></main>`;
     try {
-      const data = await window.CakgupApi.post({ action: "getMicrositeLinks", token: token(), username: DEFAULT_USERNAME });
+      await loadSlugs();
+      const data = await window.CakgupApi.post({ action: "getMicrositeLinks", token: token(), username: state.currentSlug });
       if (!data.success) throw new Error(data.message || "Gagal memuat daftar link.");
+      state.currentSlug = normalizeSlug(data.username || state.currentSlug || DEFAULT_USERNAME);
+      ensureSlugList(state.currentSlug);
       state.links = Array.isArray(data.links) ? data.links : [];
       renderAdminLayout();
     } catch (error) {
@@ -262,7 +349,7 @@
   function buildFormLink() {
     return {
       id: $("#linkIdInput")?.value || "",
-      username: DEFAULT_USERNAME,
+      username: normalizeSlug(state.currentSlug || DEFAULT_USERNAME),
       title: $("#linkTitleInput")?.value.trim() || "",
       subtitle: $("#linkSubtitleInput")?.value.trim() || "",
       url: $("#linkUrlInput")?.value.trim() || "",
@@ -302,10 +389,47 @@
     }
   }
 
+  async function loadSlugs() {
+    try {
+      const data = await window.CakgupApi.post({ action: "listSlugs", token: token() });
+      if (data.success && Array.isArray(data.slugs)) {
+        state.slugs = data.slugs.map(normalizeSlug).filter(Boolean);
+      }
+    } catch (error) {
+      // Jika endpoint lama belum diperbarui, admin tetap berjalan dengan slug default.
+      state.slugs = state.slugs && state.slugs.length ? state.slugs : [DEFAULT_USERNAME];
+    }
+    ensureSlugList(state.currentSlug || DEFAULT_USERNAME);
+  }
+
   async function reloadLinks() {
-    const data = await window.CakgupApi.post({ action: "getMicrositeLinks", token: token(), username: DEFAULT_USERNAME });
+    const slug = normalizeSlug(state.currentSlug || DEFAULT_USERNAME);
+    state.currentSlug = slug;
+    ensureSlugList(slug);
+    const data = await window.CakgupApi.post({ action: "getMicrositeLinks", token: token(), username: slug });
+    if (!data.success) throw new Error(data.message || "Gagal memuat daftar link.");
     state.links = Array.isArray(data.links) ? data.links : [];
     renderAdminLayout();
+  }
+
+  async function renameCurrentSlug() {
+    const oldSlug = normalizeSlug(state.currentSlug || DEFAULT_USERNAME);
+    const newSlug = normalizeSlug($("#slugInput")?.value || "");
+    const msg = $("#slugMessage");
+    try {
+      if (!newSlug) throw new Error("Slug baru wajib diisi.");
+      if (newSlug === oldSlug) throw new Error("Slug baru masih sama dengan slug aktif.");
+      if (!confirm(`Ubah slug /${oldSlug} menjadi /${newSlug}? Semua link pada slug lama akan dipindahkan.`)) return;
+      if (msg) { msg.className = "message"; msg.textContent = "Mengubah slug..."; }
+      const result = await window.CakgupApi.post({ action: "renameSlug", token: token(), old_username: oldSlug, new_username: newSlug });
+      if (!result.success) throw new Error(result.message || "Gagal mengubah slug.");
+      state.currentSlug = newSlug;
+      await loadSlugs();
+      await reloadLinks();
+    } catch (error) {
+      if (msg) { msg.className = "message message-error"; msg.textContent = error.message || "Gagal mengubah slug."; }
+      else alert(error.message || "Gagal mengubah slug.");
+    }
   }
 
   function fillLinkForm(id) {
@@ -338,7 +462,7 @@
         action: "saveMicrositeLink",
         token: token(),
         ...link,
-        username: link.username || DEFAULT_USERNAME,
+        username: link.username || normalizeSlug(state.currentSlug || DEFAULT_USERNAME),
         is_active: nextActive
       });
       if (!result.success) throw new Error(result.message || "Gagal memperbarui status link.");
@@ -351,7 +475,7 @@
   async function deleteLink(id) {
     if (!id || !confirm("Hapus permanen link ini dari Google Sheets?")) return;
     try {
-      const result = await window.CakgupApi.post({ action: "deleteMicrositeLink", token: token(), id, username: DEFAULT_USERNAME });
+      const result = await window.CakgupApi.post({ action: "deleteMicrositeLink", token: token(), id, username: state.currentSlug });
       if (!result.success) throw new Error(result.message || "Gagal menghapus link.");
       await reloadLinks();
     } catch (error) {

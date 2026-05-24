@@ -87,7 +87,7 @@
 
         ${p.audio_enabled === false || String(p.audio_enabled).toLowerCase() === "false" ? "" : `
           <button id="audioFab" class="audio-fab" type="button" aria-label="Putar atau hentikan nasyid">♫</button>
-          <audio id="nasyidAudio" src="${escapeHtml(audioUrl)}" ${p.audio_loop === false || String(p.audio_loop).toLowerCase() === "false" ? "" : "loop"} preload="auto"></audio>
+          <audio id="nasyidAudio" data-src="${escapeHtml(audioUrl)}" ${p.audio_loop === false || String(p.audio_loop).toLowerCase() === "false" ? "" : "loop"} preload="none"></audio>
         `}
         <div id="snowLayer" class="snow-layer" aria-hidden="true"></div>
         <button id="shareFab" class="share-fab" type="button" aria-label="Bagikan halaman">↗</button>
@@ -132,6 +132,10 @@
     function refresh() { button.classList.toggle("is-playing", !audio.paused); }
     async function playAudio() {
       try {
+        if (!audio.src) {
+          audio.src = audio.dataset.src || "";
+          audio.load();
+        }
         await audio.play();
         refresh();
       } catch (error) {
@@ -165,7 +169,7 @@
     const layer = document.getElementById("snowLayer");
     if (!layer || layer.children.length) return;
     const symbols = ["❅", "✦", "·", "۞"];
-    const count = Math.min(34, Math.max(18, Math.floor(window.innerWidth / 18)));
+    const count = Math.min(16, Math.max(8, Math.floor(window.innerWidth / 34)));
     for (let i = 0; i < count; i += 1) {
       const flake = document.createElement("span");
       flake.textContent = symbols[i % symbols.length];

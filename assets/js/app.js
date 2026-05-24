@@ -2,6 +2,7 @@
   const config = window.CAKGUP_MICROSITE_CONFIG || {};
   const BASE_PATH = (config.BASE_PATH || "/u").replace(/\/$/, "");
   const DEFAULT_USERNAME = config.DEFAULT_USERNAME || "yimg";
+  const loadedScripts = new Set();
 
   function normalizeUsername(value) {
     return String(value || "").trim().toLowerCase().replace(/\s+/g, "-").replace(/_/g, "-").replace(/[^a-z0-9-]/g, "").replace(/-+/g, "-").replace(/^-|-$/g, "");
@@ -26,12 +27,24 @@
     return { type: "public", username: DEFAULT_USERNAME };
   }
 
-  function renderLoading() {
+  function loadScript(src) {
+    if (loadedScripts.has(src)) return Promise.resolve();
+    return new Promise((resolve, reject) => {
+      const script = document.createElement("script");
+      script.src = src;
+      script.async = false;
+      script.onload = () => { loadedScripts.add(src); resolve(); };
+      script.onerror = () => reject(new Error(`Gagal memuat ${src}`));
+      document.body.appendChild(script);
+    });
+  }
+
+  function renderLoading(text = "Memuat microsite...") {
     document.getElementById("app").innerHTML = `
       <main class="loading-screen">
         <div style="text-align:center">
           <div class="spinner" style="margin:0 auto 16px"></div>
-          <p class="login-desc">Memuat microsite...</p>
+          <p class="login-desc">${text}</p>
         </div>
       </main>
     `;
@@ -55,9 +68,15 @@
       if (!data.success) throw new Error(data.message || "Data microsite tidak ditemukan.");
       renderPublic(data.microsite || config.DEFAULT_PROFILE, Array.isArray(data.links) ? data.links : config.DEFAULT_LINKS || [], { demoMode: data.demoMode });
     } catch (error) {
-      if (config.PUBLIC_FALLBACK_ENABLED && normalizeUsername(username) === normalizeUsername(DEFAULT_USERNAME)) renderFallback(error.message);
-      else renderFallback(error.message);
+      renderFallback(error.message);
     }
+  }
+
+  async function showAdmin() {
+    renderLoading("Memuat dashboard admin...");
+    await loadScript(`${BASE_PATH}/assets/js/auth.js`);
+    await loadScript(`${BASE_PATH}/assets/js/admin.js`);
+    window.CakgupAdmin.renderAdminPage();
   }
 
   async function showDiagnostics() {
@@ -88,11 +107,15 @@
     }
   }
 
-  function boot() {
+  async function boot() {
     const route = getRoute();
-    if (route.type === "admin") return window.CakgupAdmin.renderAdminPage();
-    if (route.type === "diagnostics") return showDiagnostics();
-    return showPublic(route.username);
+    try {
+      if (route.type === "admin") return showAdmin();
+      if (route.type === "diagnostics") return showDiagnostics();
+      return showPublic(route.username);
+    } catch (error) {
+      renderLoading(error.message || "Terjadi kesalahan saat memuat halaman.");
+    }
   }
 
   document.addEventListener("DOMContentLoaded", boot);

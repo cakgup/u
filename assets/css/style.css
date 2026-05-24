@@ -2003,3 +2003,165 @@ img { max-width: 100%; display: block; }
 .preview-screen .bio-link {
   min-height: 64px !important;
 }
+
+
+/* v17: slimmer link buttons */
+.link-list {
+  width: min(100%, 700px) !important;
+  margin: clamp(14px, 2vh, 22px) auto 0 !important;
+  gap: clamp(10px, 1.4vh, 14px) !important;
+}
+
+.bio-link {
+  min-height: clamp(66px, 6.4vh, 84px) !important;
+  grid-template-columns: clamp(48px, 5.7vw, 60px) 1fr 18px !important;
+  gap: clamp(10px, 1.8vw, 14px) !important;
+  padding: clamp(10px, 1.6vw, 14px) clamp(16px, 2.2vw, 20px) clamp(10px, 1.6vw, 14px) clamp(12px, 1.8vw, 14px) !important;
+  border-radius: clamp(18px, 2.4vw, 24px) !important;
+  box-shadow: 0 12px 28px rgba(0,0,0,.18), inset 0 0 0 1px rgba(255,255,255,.05) !important;
+}
+
+.link-medallion {
+  width: clamp(42px, 5vw, 52px) !important;
+  height: clamp(42px, 5vw, 52px) !important;
+  border-radius: 15px !important;
+  font-size: clamp(19px, 2.4vw, 24px) !important;
+}
+
+.link-copy { gap: 2px !important; }
+
+.link-copy strong {
+  font-size: clamp(18px, 2.35vw, 24px) !important;
+  line-height: 1.05 !important;
+}
+
+.link-copy small {
+  font-size: clamp(11px, 1.5vw, 14px) !important;
+  line-height: 1.28 !important;
+  opacity: .92 !important;
+}
+
+.link-arrow {
+  font-size: clamp(24px, 2.8vw, 30px) !important;
+}
+
+@media (max-width: 720px) {
+  .link-list {
+    width: min(100%, 350px) !important;
+    margin-top: 10px !important;
+    gap: 8px !important;
+  }
+
+  .bio-link {
+    min-height: 62px !important;
+    grid-template-columns: 44px 1fr 16px !important;
+    gap: 10px !important;
+    padding: 9px 12px 9px 10px !important;
+    border-radius: 18px !important;
+  }
+
+  .link-medallion {
+    width: 40px !important;
+    height: 40px !important;
+    border-radius: 14px !important;
+    font-size: 20px !important;
+  }
+
+  .link-copy strong {
+    font-size: 16px !important;
+    line-height: 1.04 !important;
+  }
+
+  .link-copy small {
+    font-size: 10.5px !important;
+    line-height: 1.24 !important;
+  }
+
+  .link-arrow {
+    font-size: 24px !important;
+  }
+
+  .footer {
+    margin-top: 10px !important;
+  }
+}
+
+.preview-screen .link-list {
+  margin-top: 10px !important;
+  gap: 8px !important;
+}
+.preview-screen .bio-link {
+  min-height: 58px !important;
+  grid-template-columns: 42px 1fr 16px !important;
+  gap: 8px !important;
+  padding: 8px 10px 8px 8px !important;
+  border-radius: 16px !important;
+}
+.preview-screen .link-medallion {
+  width: 36px !important;
+  height: 36px !important;
+  border-radius: 12px !important;
+  font-size: 18px !important;
+}
+.preview-screen .link-copy strong { font-size: 15px !important; }
+.preview-screen .link-copy small { font-size: 10px !important; }
+.preview-screen .link-arrow { font-size: 20px !important; }
+
+
+/* v18: editable activity title between prayer card and link list */
+.activity-title {
+  width: min(100%, 720px) !important;
+  margin: clamp(10px, 1.8vh, 18px) auto clamp(8px, 1.4vh, 14px) !important;
+  text-align: center !important;
+  position: relative;
+  z-index: 2;
+}
+
+.activity-title span {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  min-height: clamp(38px, 4.6vh, 52px) !important;
+  max-width: 100% !important;
+  padding: clamp(8px, 1.4vw, 12px) clamp(18px, 2.5vw, 28px) !important;
+  border-radius: 999px !important;
+  border: 1px solid rgba(227,190,113,.26) !important;
+  background: linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.025)), rgba(10,26,23,.70) !important;
+  color: var(--gold-soft) !important;
+  box-shadow: 0 14px 34px rgba(0,0,0,.18), inset 0 0 0 1px rgba(255,255,255,.04) !important;
+  font-weight: 800 !important;
+  letter-spacing: .08em !important;
+  text-transform: uppercase !important;
+  font-size: clamp(15px, 2.15vw, 22px) !important;
+  line-height: 1.15 !important;
+}
+
+@media (max-width: 720px) {
+  .activity-title {
+    width: min(100%, 350px) !important;
+    margin: 8px auto 7px !important;
+  }
+
+  .activity-title span {
+    min-height: 34px !important;
+    padding: 7px 14px !important;
+    font-size: 12px !important;
+    letter-spacing: .06em !important;
+  }
+}
+
+.preview-screen .activity-title {
+  width: min(100%, 330px) !important;
+  margin: 8px auto 7px !important;
+}
+
+.preview-screen .activity-title span {
+  min-height: 32px !important;
+  padding: 6px 12px !important;
+  font-size: 11px !important;
+}
+
+/* v18: ensure prayer title uses Kota Bekasi */
+.prayer-city[data-city="dki"]::after {
+  content: "Kota Bekasi dan Sekitarnya";
+}

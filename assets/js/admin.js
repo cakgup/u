@@ -5,7 +5,7 @@
   const DEFAULT_USERNAME = config.DEFAULT_USERNAME || "yimg";
   const $ = (selector) => document.querySelector(selector);
 
-  const state = { links: [], slugs: [DEFAULT_USERNAME], currentSlug: DEFAULT_USERNAME, editingId: "" };
+  const state = { links: [], slugs: [DEFAULT_USERNAME], currentSlug: DEFAULT_USERNAME, editingId: "", eventTitle: (config.DEFAULT_PROFILE && config.DEFAULT_PROFILE.event_title) || "Kegiatan Yayasan" };
 
   function h(value) { return window.CakgupMicrosite.escapeHtml(value); }
   function token() { return window.CakgupAuth.getToken(); }
@@ -35,7 +35,8 @@
       ...(config.DEFAULT_PROFILE || {}),
       id: slug,
       username: slug,
-      microsite_url: publicUrlFor(slug)
+      microsite_url: publicUrlFor(slug),
+      event_title: state.eventTitle || ((config.DEFAULT_PROFILE || {}).event_title || "")
     };
   }
 
@@ -120,6 +121,11 @@
               </section>
 
               <section class="admin-card">
+                <h2>Judul Kegiatan</h2>
+                ${renderActivityTitleForm()}
+              </section>
+
+              <section class="admin-card">
                 <h2>Tambah / Edit Tombol Link</h2>
                 ${renderLinkForm()}
               </section>
@@ -180,6 +186,25 @@
         </div>
         <p id="slugMessage" class="message hidden"></p>
       </div>
+    `;
+  }
+
+
+  function renderActivityTitleForm() {
+    return `
+      <form id="activityTitleForm" class="reference-link-form">
+        <div class="form-grid reference-form-grid">
+          <div class="field-full">
+            <label class="label" for="activityTitleInput">Judul Kegiatan</label>
+            <input id="activityTitleInput" class="input" type="text" value="${h(state.eventTitle || "")}" placeholder="Contoh: Kajian Ahad Pagi">
+          </div>
+        </div>
+        <p class="slug-help">Judul ini akan tampil di antara kartu jadwal shalat dan daftar tombol link pada microsite aktif.</p>
+        <div class="button-row admin-actions">
+          <button class="secondary-button" type="submit">Simpan Judul</button>
+        </div>
+        <p id="activityTitleMessage" class="message hidden"></p>
+      </form>
     `;
   }
 
@@ -304,6 +329,12 @@
 
     $("#renameSlugButton")?.addEventListener("click", renameCurrentSlug);
 
+    $("#activityTitleForm")?.addEventListener("submit", saveActivityTitle);
+    $("#activityTitleInput")?.addEventListener("input", (event) => {
+      state.eventTitle = event.target.value;
+      updatePreview();
+    });
+
 
     $("#reloadButton")?.addEventListener("click", () => renderAdminPage());
     $("#focusFormButton")?.addEventListener("click", () => $("#linkTitleInput")?.focus());
@@ -339,6 +370,7 @@
       if (!data.success) throw new Error(data.message || "Gagal memuat daftar link.");
       state.currentSlug = normalizeSlug(data.username || state.currentSlug || DEFAULT_USERNAME);
       ensureSlugList(state.currentSlug);
+      state.eventTitle = (data.meta && data.meta.event_title) || data.event_title || ((config.DEFAULT_PROFILE || {}).event_title || "Kegiatan Yayasan");
       state.links = Array.isArray(data.links) ? data.links : [];
       renderAdminLayout();
     } catch (error) {
@@ -408,8 +440,35 @@
     ensureSlugList(slug);
     const data = await window.CakgupApi.post({ action: "getMicrositeLinks", token: token(), username: slug });
     if (!data.success) throw new Error(data.message || "Gagal memuat daftar link.");
+    state.eventTitle = (data.meta && data.meta.event_title) || data.event_title || state.eventTitle || ((config.DEFAULT_PROFILE || {}).event_title || "Kegiatan Yayasan");
     state.links = Array.isArray(data.links) ? data.links : [];
     renderAdminLayout();
+  }
+
+
+  async function saveActivityTitle(event) {
+    event.preventDefault();
+    const msg = $("#activityTitleMessage");
+    const button = event.submitter;
+    const title = ($("#activityTitleInput")?.value || "").trim();
+    try {
+      if (button) { button.disabled = true; button.textContent = "Menyimpan..."; }
+      if (msg) { msg.className = "message"; msg.textContent = "Menyimpan judul kegiatan..."; }
+      const result = await window.CakgupApi.post({
+        action: "saveMicrositeMeta",
+        token: token(),
+        username: normalizeSlug(state.currentSlug || DEFAULT_USERNAME),
+        event_title: title
+      });
+      if (!result.success) throw new Error(result.message || "Gagal menyimpan judul kegiatan.");
+      state.eventTitle = title;
+      if (msg) { msg.className = "message message-success"; msg.textContent = "Judul kegiatan berhasil disimpan."; }
+      updatePreview();
+    } catch (error) {
+      if (msg) { msg.className = "message message-error"; msg.textContent = error.message || "Gagal menyimpan judul kegiatan."; }
+    } finally {
+      if (button) { button.disabled = false; button.textContent = "Simpan Judul"; }
+    }
   }
 
   async function renameCurrentSlug() {

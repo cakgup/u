@@ -87,7 +87,7 @@
               <p id="prayerDate" class="prayer-date">Memuat jadwal harian...</p>
             </section>
           </section>
-
+          ${renderActivityTitle(p)}
 
           <nav class="link-list" aria-label="Daftar tautan penting">
             ${activeLinks.length ? activeLinks.map(renderLink).join("") : `<div class="empty-links">Belum ada link aktif.</div>`}
@@ -107,6 +107,18 @@
         <div id="toast" class="toast" role="status"></div>
       </main>
     `;
+  }
+
+
+  function renderActivityTitle(profile = {}) {
+    const fallback = (config.DEFAULT_PROFILE && config.DEFAULT_PROFILE.event_title) || "";
+    const rawTitle = profile.event_title || profile.activity_title || fallback;
+    const title = String(rawTitle || "").trim();
+    if (!title) return "";
+    return `
+        <section class="activity-title" aria-label="Judul kegiatan">
+          <span>${escapeHtml(title)}</span>
+        </section>`;
   }
 
   function renderLink(link) {

@@ -7,8 +7,10 @@
 const CONFIG = {
   SPREADSHEET_ID: "",
   SHEET_LINKS: "microsite_links",
+  SHEET_META: "microsite_meta",
   BASE_MICROSITE_URL: "https://cakgup.github.io/u",
   DEFAULT_USERNAME: "yimg",
+  DEFAULT_EVENT_TITLE: "Kegiatan Yayasan",
   API_TOKEN: "cakgup",
   CACHE_SECONDS: 90
 };
@@ -16,6 +18,7 @@ const CONFIG = {
 const PROP_SPREADSHEET_ID = "CAKGUP_MICROSITE_SPREADSHEET_ID";
 const PROP_API_TOKEN = "CAKGUP_MICROSITE_API_TOKEN";
 const LINK_HEADERS = ["id","username","title","subtitle","url","icon","button_color","text_color","sort_order","is_active","created_at","updated_at"];
+const META_HEADERS = ["username","event_title","created_at","updated_at"];
 
 function doGet(e) {
   try {
@@ -56,11 +59,13 @@ function doPost(e) {
     if (action === "getmicrositelinks" || action === "getlinks" || action === "listlinks" || action === "listadmin") {
       const username = sanitizeUsername(body.username || CONFIG.DEFAULT_USERNAME);
       setupSheet();
-      return jsonOutput({ success: true, username: username, links: getLinks(username, true), slugs: listSlugs() });
+      const meta = getMicrositeMeta(username);
+      return jsonOutput({ success: true, username: username, links: getLinks(username, true), slugs: listSlugs(), meta: meta, event_title: meta.event_title });
     }
 
     if (action === "listslugs" || action === "getslugs") return jsonOutput({ success: true, slugs: listSlugs() });
     if (action === "renameslug" || action === "renameusername" || action === "updateslug") return jsonOutput(renameSlug(body));
+    if (action === "savemicrositemeta" || action === "savemeta" || action === "saveeventtitle") return jsonOutput(saveMicrositeMeta(body));
     if (action === "savemicrositelink" || action === "savelink" || action === "upsertlink") return jsonOutput(saveLink(body));
     if (action === "deletemicrositelink" || action === "deletelink" || action === "hapuslink") return jsonOutput(deleteLink(body));
 
@@ -72,6 +77,7 @@ function doPost(e) {
 
 function getStaticProfile(username) {
   username = sanitizeUsername(username || CONFIG.DEFAULT_USERNAME);
+  const meta = getMicrositeMeta(username);
   return {
     id: username,
     username: username,
@@ -79,6 +85,7 @@ function getStaticProfile(username) {
     display_name: "Yayasan Indonesia Maju Gemilang",
     short_name: "Indonesia Maju Gemilang",
     tagline: "Bersama, Kita Bisa Mewujudkan Kebaikan",
+    event_title: meta.event_title || CONFIG.DEFAULT_EVENT_TITLE,
     bio: "Hadir sebagai ruang kolaborasi kebaikan untuk memberdayakan umat, menebar manfaat, dan membangun masa depan yang gemilang dengan semangat kebersamaan.",
     logo_url: "/u/assets/img/logo-yimg.png",
     islamic_script: "وَتَعَاوَنُوا عَلَى الْبِرِّ وَالتَّقْوَى",
@@ -114,10 +121,15 @@ function clearLinksCache(username) {
 function listSlugs() {
   setupSheet();
   const rows = readRows(getLinksSheet());
+  const metaRows = readRows(getMetaSheet(), false);
   const set = {};
   set[CONFIG.DEFAULT_USERNAME] = true;
   rows.forEach(row => {
     const slug = sanitizeUsername(row.username || CONFIG.DEFAULT_USERNAME);
+    if (slug) set[slug] = true;
+  });
+  metaRows.forEach(row => {
+    const slug = sanitizeUsername(row.username || "");
     if (slug) set[slug] = true;
   });
   return Object.keys(set).sort();
@@ -150,6 +162,19 @@ function renameSlug(body) {
         updated++;
       }
     }
+
+    const metaSheet = getMetaSheet();
+    const metaHeaders = getHeaders(metaSheet);
+    const metaRows = readRows(metaSheet, false);
+    metaRows.forEach((row, index) => {
+      if (sanitizeUsername(row.username || "") === oldSlug) {
+        row.username = newSlug;
+        row.updated_at = now;
+        writeObjectToRow(metaSheet, index + 2, metaHeaders, row);
+        updated++;
+      }
+    });
+
     clearLinksCache(oldSlug);
     clearLinksCache(newSlug);
     return { success: true, message: updated ? "Slug berhasil diubah." : "Slug baru siap digunakan.", updated: updated, old_username: oldSlug, new_username: newSlug, slugs: listSlugs() };
@@ -164,6 +189,47 @@ function getLinks(username, includeInactive) {
     .filter(row => sanitizeUsername(row.username || CONFIG.DEFAULT_USERNAME) === username)
     .filter(row => includeInactive || toBool(row.is_active, true))
     .sort((a, b) => Number(a.sort_order || 999) - Number(b.sort_order || 999));
+}
+
+
+function getMicrositeMeta(username) {
+  setupSheet();
+  username = sanitizeUsername(username || CONFIG.DEFAULT_USERNAME);
+  const rows = readRows(getMetaSheet(), false);
+  const row = rows.find(item => sanitizeUsername(item.username || "") === username) || {};
+  return {
+    username: username,
+    event_title: String(row.event_title || CONFIG.DEFAULT_EVENT_TITLE || "").trim()
+  };
+}
+
+function saveMicrositeMeta(body) {
+  setupSheet();
+  const username = sanitizeUsername(body.username || CONFIG.DEFAULT_USERNAME);
+  const eventTitle = String(body.event_title || body.activity_title || "").trim();
+  const now = new Date().toISOString();
+  const sheet = getMetaSheet();
+  const headers = getHeaders(sheet);
+  const rows = readRows(sheet, false);
+  const rowIndex = rows.findIndex(row => sanitizeUsername(row.username || "") === username);
+  const values = { username: username, event_title: eventTitle, created_at: now, updated_at: now };
+
+  if (rowIndex >= 0) {
+    const existing = rows[rowIndex];
+    values.created_at = existing.created_at || now;
+    values.updated_at = now;
+    writeObjectToRow(sheet, rowIndex + 2, headers, values);
+  } else {
+    appendObject(sheet, headers, values);
+  }
+
+  clearLinksCache(username);
+  return {
+    success: true,
+    message: "Judul kegiatan berhasil disimpan.",
+    meta: { username: username, event_title: eventTitle },
+    event_title: eventTitle
+  };
 }
 
 function saveLink(body) {
@@ -228,7 +294,10 @@ function deleteLink(body) {
   }
 }
 
-function setupSheet() { ensureHeaders(getLinksSheet(), LINK_HEADERS); }
+function setupSheet() {
+  ensureHeaders(getLinksSheet(), LINK_HEADERS);
+  ensureHeaders(getMetaSheet(), META_HEADERS);
+}
 
 function getSpreadsheet() {
   if (CONFIG.SPREADSHEET_ID) return SpreadsheetApp.openById(CONFIG.SPREADSHEET_ID);
@@ -245,6 +314,11 @@ function getSpreadsheet() {
 function getLinksSheet() {
   const ss = getSpreadsheet();
   return ss.getSheetByName(CONFIG.SHEET_LINKS) || ss.insertSheet(CONFIG.SHEET_LINKS);
+}
+
+function getMetaSheet() {
+  const ss = getSpreadsheet();
+  return ss.getSheetByName(CONFIG.SHEET_META) || ss.insertSheet(CONFIG.SHEET_META);
 }
 
 function ensureHeaders(sheet, requiredHeaders) {
@@ -266,16 +340,18 @@ function getHeaders(sheet) {
   return sheet.getRange(1, 1, 1, lastCol).getValues()[0].map(value => String(value || "").trim());
 }
 
-function readRows(sheet) {
+function readRows(sheet, requireContent) {
   const lastRow = sheet.getLastRow();
   const lastCol = sheet.getLastColumn();
   if (lastRow < 2 || lastCol < 1) return [];
   const headers = getHeaders(sheet);
-  return sheet.getRange(2, 1, lastRow - 1, lastCol).getValues().map(row => {
+  const rows = sheet.getRange(2, 1, lastRow - 1, lastCol).getValues().map(row => {
     const object = {};
     headers.forEach((header, index) => { if (header) object[header] = row[index]; });
     return object;
-  }).filter(object => object.id || object.title || object.url);
+  });
+  if (requireContent === false) return rows;
+  return rows.filter(object => object.id || object.title || object.url);
 }
 
 function appendObject(sheet, headers, object) {

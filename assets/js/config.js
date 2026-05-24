@@ -22,6 +22,7 @@ window.CAKGUP_MICROSITE_CONFIG = {
     display_name: "Yayasan Indonesia Maju Gemilang",
     short_name: "Indonesia Maju Gemilang",
     tagline: "Bersama, Kita Bisa Mewujudkan Kebaikan",
+    event_title: "Kegiatan Yayasan",
     bio: "Hadir sebagai ruang kolaborasi kebaikan untuk memberdayakan umat, menebar manfaat, dan membangun masa depan yang gemilang dengan semangat kebersamaan.",
     logo_url: "/u/assets/img/logo-yimg.png",
     islamic_script: "وَتَعَاوَنُوا عَلَى الْبِرِّ وَالتَّقْوَى",

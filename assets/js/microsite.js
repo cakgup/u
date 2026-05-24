@@ -23,10 +23,13 @@
     const key = String(name || "link").toLowerCase().trim();
     const map = {
       link: "🔗",
-      info: "ℹ️",
+      info: "☾",
+      mosque: "🕌",
       star: "✦",
+      program: "🤲",
       heart: "♥",
-      whatsapp: "☘",
+      donate: "♥",
+      whatsapp: "☏",
       instagram: "◎",
       youtube: "▶",
       facebook: "f",
@@ -35,221 +38,88 @@
       email: "✉",
       phone: "☎",
       document: "▣",
-      donate: "♥",
-      program: "✦"
+      form: "✎"
     };
     return map[key] || "🔗";
   }
 
-  function getProfileCssVars(profile = {}) {
-    return [
-      `--yimg-orange:${escapeHtml(profile.primary_color || "#C44A00")}`,
-      `--yimg-red:${escapeHtml(profile.secondary_color || "#D40000")}`,
-      `--yimg-purple:${escapeHtml(profile.accent_color || "#4B006E")}`,
-      `--ink:${escapeHtml(profile.text_color || "#2D1B12")}`
-    ].join(";");
+  function cleanLinks(links = []) {
+    return (Array.isArray(links) ? links : [])
+      .filter((item) => item && item.is_active !== false && String(item.is_active).toLowerCase() !== "false")
+      .sort((a, b) => Number(a.sort_order || 999) - Number(b.sort_order || 999));
   }
 
   function renderMicrositeMarkup(profile = {}, links = [], options = {}) {
-    const logo = normalizePathAsset(profile.logo_url || profile.avatar_url, `${BASE_PATH}/assets/img/logo-yimg.png`);
-    const banner = normalizePathAsset(profile.banner_url || "", "");
-    const displayName = profile.display_name || "Yayasan Indonesia Maju Gemilang";
-    const tagline = profile.tagline || "Bergerak Bersama untuk Ummat dan Kebaikan";
-    const bio = profile.bio || "Microsite resmi Yayasan Indonesia Maju Gemilang.";
-    const script = profile.islamic_script || "بِسْمِ اللّٰهِ الرَّحْمٰنِ الرَّحِيْمِ";
-    const showScript = profile.show_islamic_script !== false && String(profile.show_islamic_script) !== "false";
-    const activeLinks = Array.isArray(links) ? links.slice().sort((a, b) => Number(a.sort_order || 0) - Number(b.sort_order || 0)) : [];
-    const publicUrl = profile.microsite_url || `${location.origin}${BASE_PATH}/${profile.username || config.DEFAULT_USERNAME || "yimg"}`;
-    const style = getProfileCssVars(profile);
+    const p = { ...(config.DEFAULT_PROFILE || {}), ...(profile || {}) };
+    const logo = normalizePathAsset(p.logo_url, `${BASE_PATH}/assets/img/logo-yimg.png`);
+    const audioUrl = normalizePathAsset(p.audio_url, `${BASE_PATH}/assets/audio/nasyid.mp3`);
+    const activeLinks = cleanLinks(links.length ? links : config.DEFAULT_LINKS || []);
+    const publicUrl = p.microsite_url || `${location.origin}${BASE_PATH}/${p.username || config.DEFAULT_USERNAME || "yimg"}`;
 
     return `
-      <main class="public-page" style="${style}">
-        ${options.demoMode ? `<div class="demo-alert"><strong>Mode demo.</strong> API Google Apps Script belum dikonfigurasi, sehingga halaman memakai data contoh lokal.</div>` : ""}
-        ${options.fallbackMode ? `<div class="demo-alert"><strong>Mode fallback.</strong> API sudah diset, tetapi data default belum dapat dibaca. Halaman tetap ditampilkan agar mudah diakses.</div>` : ""}
-        <section class="microsite-card">
-          <header class="hero">
-            ${banner ? `<div class="hero-bg-image" style="background-image:url('${escapeHtml(banner)}')"></div>` : ""}
-            <div class="hero-pattern" aria-hidden="true"></div>
-            <div>
-              ${showScript ? `<div class="islamic-script" lang="ar" dir="rtl">${escapeHtml(script)}</div>` : ""}
-              <div class="logo-wrap">
-                <img src="${escapeHtml(logo)}" alt="Logo ${escapeHtml(displayName)}" loading="eager">
-              </div>
-              <h1 class="brand-name gradient-text">${escapeHtml(displayName)}</h1>
-              <p class="tagline">${escapeHtml(tagline)}</p>
+      <main class="public-page">
+        ${options.fallbackMode ? `<div class="demo-alert">API belum mengembalikan data aktif. Halaman memakai data cadangan.</div>` : ""}
+        <section class="stage" aria-label="Microsite Yayasan Indonesia Maju Gemilang">
+          <div class="turkish-frame" aria-hidden="true"></div>
+          <section class="hero-panel">
+            <div class="hero-ornament ornament-left" aria-hidden="true"></div>
+            <div class="hero-ornament ornament-right" aria-hidden="true"></div>
+            <div class="lantern lantern-left" aria-hidden="true">۞</div>
+            <div class="lantern lantern-right" aria-hidden="true">۞</div>
+            <div class="logo-aura">
+              <img class="brand-logo" src="${escapeHtml(logo)}" alt="Logo Yayasan Indonesia Maju Gemilang" loading="eager">
             </div>
-          </header>
+            <p class="logo-caption">Indonesia Maju Gemilang</p>
+            <h1 class="brand-title">Yayasan<br>Indonesia Maju Gemilang</h1>
+            <div class="gold-divider"><span>◆</span></div>
+            <p class="arabic-script">${escapeHtml(p.islamic_script)}</p>
+            <p class="script-translation">“${escapeHtml(p.islamic_translation || "Dan tolong-menolonglah kamu dalam kebajikan dan takwa.")}”</p>
+            <p class="hero-desc">${escapeHtml(p.bio)}</p>
+          </section>
 
-          <section class="profile-body">
-            <div class="bismillah-divider" lang="ar" dir="rtl">الحمد لله</div>
-            <p class="bio">${escapeHtml(bio)}</p>
-            <nav class="link-list" aria-label="Tautan microsite">
-              ${activeLinks.length ? activeLinks.map((link) => renderLink(profile, link)).join("") : `<div class="empty-links">Belum ada tautan aktif.</div>`}
-            </nav>
-            <div class="public-actions">
-              <button class="share-button" type="button" data-share-url="${escapeHtml(publicUrl)}">Bagikan</button>
-              <a class="admin-button" href="${BASE_PATH}/admin">Admin</a>
+          <section class="mission-card">
+            <div class="mission-medallion">☪</div>
+            <div class="mission-copy">
+              <h2>${escapeHtml(p.tagline || "Bersama, Kita Bisa Mewujudkan Kebaikan")}</h2>
+              <div class="mini-divider"><span>♥</span></div>
+              <p>Setiap langkah kecil Anda adalah bagian dari perubahan besar bagi sesama.</p>
             </div>
           </section>
+
+          <nav class="link-list" aria-label="Daftar tautan penting">
+            ${activeLinks.length ? activeLinks.map(renderLink).join("") : `<div class="empty-links">Belum ada link aktif.</div>`}
+          </nav>
+
+          <footer class="footer">
+            <span>© ${new Date().getFullYear()} Yayasan Indonesia Maju Gemilang</span>
+          </footer>
         </section>
-        <footer class="footer">© ${new Date().getFullYear()} Yayasan Indonesia Maju Gemilang · Dibuat dengan CakGup Microsite</footer>
-        ${options.enableAudio !== false ? renderAudioControl(profile) : ""}
+
+        ${p.audio_enabled === false || String(p.audio_enabled).toLowerCase() === "false" ? "" : `
+          <button id="audioFab" class="audio-fab" type="button" aria-label="Putar atau hentikan nasyid">♫</button>
+          <audio id="nasyidAudio" src="${escapeHtml(audioUrl)}" ${p.audio_loop === false || String(p.audio_loop).toLowerCase() === "false" ? "" : "loop"} preload="auto"></audio>
+        `}
         <div id="snowLayer" class="snow-layer" aria-hidden="true"></div>
-        <div id="toast" class="toast" role="status" aria-live="polite"></div>
+        <button id="shareFab" class="share-fab" type="button" aria-label="Bagikan halaman">↗</button>
+        <div id="toast" class="toast" role="status"></div>
       </main>
     `;
   }
 
-  function renderLink(profile, link) {
-    const title = link.title || "Tautan";
-    const url = normalizePathAsset(link.url || "#", "#");
-    const color = link.button_color || profile.primary_color || "#C44A00";
-    const textColor = link.text_color || "#FFFFFF";
+  function renderLink(link) {
+    const bg = link.button_color || "#073b31";
+    const text = link.text_color || "#ffffff";
+    const subtitle = link.subtitle || link.description || "";
     return `
-      <a class="bio-link" href="${escapeHtml(url)}" target="_blank" rel="noopener" data-link-id="${escapeHtml(link.id || "")}" data-link-title="${escapeHtml(title)}" data-link-url="${escapeHtml(url)}" style="background:${escapeHtml(color)};color:${escapeHtml(textColor)}">
-        <span class="link-icon" aria-hidden="true">${escapeHtml(iconFor(link.icon))}</span>
-        <span class="link-title">${escapeHtml(title)}</span>
-        <span class="link-arrow" aria-hidden="true">›</span>
+      <a class="bio-link" href="${escapeHtml(link.url || "#")}" target="_blank" rel="noopener" style="--btn-bg:${escapeHtml(bg)};--btn-text:${escapeHtml(text)}">
+        <span class="link-medallion">${escapeHtml(iconFor(link.icon))}</span>
+        <span class="link-copy">
+          <strong>${escapeHtml(link.title || "Link")}</strong>
+          ${subtitle ? `<small>${escapeHtml(subtitle)}</small>` : ""}
+        </span>
+        <span class="link-arrow">›</span>
       </a>
     `;
-  }
-
-  function renderAudioControl(profile = {}) {
-    const enabled = profile.audio_enabled !== false && String(profile.audio_enabled) !== "false";
-    if (!enabled) return "";
-    const audioUrl = normalizePathAsset(profile.audio_url || `${BASE_PATH}/assets/audio/nasyid.mp3`, `${BASE_PATH}/assets/audio/nasyid.mp3`);
-    const loop = profile.audio_loop !== false && String(profile.audio_loop) !== "false";
-    const volume = Number(profile.audio_volume || 0.45);
-    return `
-      <audio id="nasyidAudio" src="${escapeHtml(audioUrl)}" ${loop ? "loop" : ""} preload="none" data-volume="${escapeHtml(String(volume))}" data-autoplay="true"></audio>
-      <button id="audioFab" class="audio-fab" type="button" aria-label="Putar atau hentikan backsound islami" title="Nasyid">
-        <span class="melody-icon" aria-hidden="true">♫</span>
-      </button>
-    `;
-  }
-
-  function bindPublicInteractions(profile = {}, links = []) {
-    document.querySelectorAll(".share-button").forEach((button) => {
-      button.addEventListener("click", async () => {
-        const url = button.getAttribute("data-share-url") || window.location.href;
-        const title = profile.display_name || document.title;
-        try {
-          if (navigator.share) {
-            await navigator.share({ title, text: profile.tagline || title, url });
-          } else {
-            await navigator.clipboard.writeText(url);
-            showToast("Link microsite disalin.");
-          }
-        } catch (error) {
-          if (error && error.name !== "AbortError") showToast("Gagal membagikan link.");
-        }
-      });
-    });
-
-    document.querySelectorAll(".bio-link").forEach((anchor) => {
-      anchor.addEventListener("click", () => {
-        const payload = {
-          action: "logMicrositeClick",
-          microsite_id: profile.id || "",
-          username: profile.username || config.DEFAULT_USERNAME || "yimg",
-          link_id: anchor.getAttribute("data-link-id") || "",
-          title: anchor.getAttribute("data-link-title") || "",
-          target_url: anchor.getAttribute("data-link-url") || anchor.href,
-          user_agent: navigator.userAgent || "",
-          referrer: document.referrer || ""
-        };
-
-        if (!window.CakgupApi.postBeacon(payload)) {
-          window.CakgupApi.post(payload).catch(() => {});
-        }
-      });
-    });
-
-    bindAudioControl();
-    bindSnowEffect();
-  }
-
-  function bindAudioControl() {
-    const audio = document.getElementById("nasyidAudio");
-    const button = document.getElementById("audioFab");
-    if (!audio || !button) return;
-
-    const volume = Number(audio.getAttribute("data-volume") || 0.45);
-    audio.volume = Number.isFinite(volume) ? Math.max(0, Math.min(1, volume)) : 0.45;
-
-    let autoplayTried = false;
-
-    function setPlayingState(isPlaying) {
-      button.classList.toggle("is-playing", isPlaying);
-      button.setAttribute("aria-label", isPlaying ? "Hentikan backsound islami" : "Putar backsound islami");
-      button.setAttribute("aria-pressed", isPlaying ? "true" : "false");
-    }
-
-    async function playAudio({ silent = false } = {}) {
-      try {
-        audio.volume = Number.isFinite(volume) ? Math.max(0, Math.min(1, volume)) : 0.45;
-        await audio.play();
-        setPlayingState(true);
-        return true;
-      } catch (error) {
-        setPlayingState(false);
-        if (!silent) showToast("Audio belum dapat diputar. Tekan ikon melodi sekali lagi.");
-        return false;
-      }
-    }
-
-    button.addEventListener("click", async () => {
-      if (audio.paused) {
-        await playAudio();
-      } else {
-        audio.pause();
-        setPlayingState(false);
-      }
-    });
-
-    function tryAutoplay() {
-      if (autoplayTried || !audio.paused) return;
-      autoplayTried = true;
-      playAudio({ silent: true });
-    }
-
-    function resumeAfterGesture() {
-      if (!audio.paused) return;
-      playAudio({ silent: true });
-    }
-
-    window.setTimeout(tryAutoplay, 650);
-    ["pointerdown", "touchstart", "keydown", "scroll"].forEach((eventName) => {
-      window.addEventListener(eventName, resumeAfterGesture, { once: true, passive: true });
-    });
-
-    audio.addEventListener("ended", () => setPlayingState(false));
-    audio.addEventListener("pause", () => setPlayingState(false));
-    audio.addEventListener("play", () => setPlayingState(true));
-  }
-
-  function bindSnowEffect() {
-    const layer = document.getElementById("snowLayer");
-    if (!layer || layer.dataset.ready === "1") return;
-    layer.dataset.ready = "1";
-
-    const count = window.matchMedia("(max-width: 640px)").matches ? 22 : 34;
-    const fragment = document.createDocumentFragment();
-
-    for (let i = 0; i < count; i += 1) {
-      const flake = document.createElement("span");
-      flake.className = "snowflake";
-      const size = 3 + Math.random() * 5;
-      flake.style.setProperty("--x", `${Math.random() * 100}vw`);
-      flake.style.setProperty("--x-end", `${(Math.random() * 42 - 21).toFixed(1)}vw`);
-      flake.style.setProperty("--size", `${size.toFixed(1)}px`);
-      flake.style.setProperty("--duration", `${12 + Math.random() * 14}s`);
-      flake.style.setProperty("--delay", `${Math.random() * -22}s`);
-      flake.style.setProperty("--opacity", `${0.22 + Math.random() * 0.48}`);
-      fragment.appendChild(flake);
-    }
-
-    layer.appendChild(fragment);
   }
 
   function showToast(message) {
@@ -257,30 +127,96 @@
     if (!toast) return;
     toast.textContent = message;
     toast.classList.add("show");
-    clearTimeout(showToast._timer);
-    showToast._timer = setTimeout(() => toast.classList.remove("show"), 1900);
+    clearTimeout(showToast.timer);
+    showToast.timer = setTimeout(() => toast.classList.remove("show"), 2200);
+  }
+
+  function setupAudio(profile = {}) {
+    const audio = document.getElementById("nasyidAudio");
+    const button = document.getElementById("audioFab");
+    if (!audio || !button) return;
+
+    audio.volume = Number(profile.audio_volume || config.DEFAULT_PROFILE?.audio_volume || 0.34);
+    let attempted = false;
+
+    function refresh() { button.classList.toggle("is-playing", !audio.paused); }
+    async function playAudio() {
+      try {
+        await audio.play();
+        refresh();
+      } catch (error) {
+        refresh();
+      }
+    }
+    function tryAutoplay() {
+      if (attempted) return;
+      attempted = true;
+      playAudio();
+    }
+
+    button.addEventListener("click", async () => {
+      if (audio.paused) await playAudio();
+      else audio.pause();
+      refresh();
+    });
+    audio.addEventListener("play", refresh);
+    audio.addEventListener("pause", refresh);
+
+    if (profile.audio_autoplay !== false && String(profile.audio_autoplay).toLowerCase() !== "false") {
+      tryAutoplay();
+      ["click", "touchstart", "keydown", "scroll"].forEach((eventName) => {
+        window.addEventListener(eventName, playAudio, { once: true, passive: true });
+      });
+    }
+  }
+
+  function setupSnow(profile = {}) {
+    if (profile.snow_enabled === false || String(profile.snow_enabled).toLowerCase() === "false") return;
+    const layer = document.getElementById("snowLayer");
+    if (!layer || layer.children.length) return;
+    const symbols = ["❅", "✦", "·", "۞"];
+    const count = Math.min(34, Math.max(18, Math.floor(window.innerWidth / 18)));
+    for (let i = 0; i < count; i += 1) {
+      const flake = document.createElement("span");
+      flake.textContent = symbols[i % symbols.length];
+      flake.style.left = `${Math.random() * 100}%`;
+      flake.style.animationDelay = `${Math.random() * -16}s`;
+      flake.style.animationDuration = `${12 + Math.random() * 14}s`;
+      flake.style.opacity = `${0.16 + Math.random() * 0.34}`;
+      flake.style.fontSize = `${9 + Math.random() * 15}px`;
+      layer.appendChild(flake);
+    }
+  }
+
+  function bindPublicInteractions(profile = {}) {
+    setupAudio(profile);
+    setupSnow(profile);
+    document.getElementById("shareFab")?.addEventListener("click", async () => {
+      const url = profile.microsite_url || location.href;
+      try {
+        if (navigator.share) await navigator.share({ title: profile.display_name || document.title, url });
+        else {
+          await navigator.clipboard.writeText(url);
+          showToast("Link microsite disalin");
+        }
+      } catch (error) {
+        showToast("Bagikan dibatalkan");
+      }
+    });
   }
 
   async function loadMicrosite(username) {
     if (!window.CakgupApi.isConfigured()) {
-      return {
-        success: true,
-        demoMode: true,
-        microsite: config.DEFAULT_PROFILE,
-        links: config.DEFAULT_LINKS
-      };
+      return { success: true, demoMode: true, microsite: config.DEFAULT_PROFILE, links: config.DEFAULT_LINKS };
     }
-
-    return window.CakgupApi.get({ action: "getMicrosite", username });
+    return window.CakgupApi.get({ action: "getMicrosite", username: username || config.DEFAULT_USERNAME || "yimg" });
   }
 
   window.CakgupMicrosite = {
     escapeHtml,
-    normalizePathAsset,
     iconFor,
     renderMicrositeMarkup,
     bindPublicInteractions,
-    loadMicrosite,
-    showToast
+    loadMicrosite
   };
 })();

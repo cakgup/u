@@ -1,43 +1,17 @@
-VALIDATION REPORT - CakGup Microsite /u
+VALIDATION REPORT - CAKGUP MICROSITE SIMPLE LINKS V3
 
 Tanggal validasi: 2026-05-24
 
-1. Endpoint API
-   API_BASE_URL sudah diset ke:
-   https://script.google.com/macros/s/AKfycbybAACwBMZeiOERkFpZruMwgVWpmB45ddToZMScbGOPOJY2DRS0cfdBLJtHgaDnxxDzjw/exec
+Hasil:
+- JavaScript syntax check: OK
+- Google Apps Script syntax check: OK
+- Tidak ada dependency eksternal CSS/JS.
+- Tidak ada endpoint log klik.
+- Tidak ada endpoint update profile.
+- API hanya untuk ping, getMicrosite/getLinks, loginAdmin, getMicrositeLinks, saveMicrositeLink, deleteMicrositeLink.
+- Audio memakai file lokal /u/assets/audio/nasyid.mp3.
+- Tombol audio kecil, icon melodi saja.
+- Visual memakai CSS murni agar ringan dan mudah diakses.
 
-2. Validasi sintaks lokal
-   - assets/js/admin.js: OK
-   - assets/js/api.js: OK
-   - assets/js/app.js: OK
-   - assets/js/auth.js: OK
-   - assets/js/config.js: OK
-   - assets/js/microsite.js: OK
-   - gas/Code.gs: OK
-
-3. Optimasi akses ringan
-   - Google Fonts dihapus dari index.html dan 404.html.
-   - Font diganti ke system font agar halaman lebih cepat dan tetap terbaca.
-   - Logo PNG dioptimalkan dari ±95 KB menjadi ±67 KB.
-   - Audio nasyid diset preload="none" sehingga tidak otomatis diunduh saat halaman pertama dibuka.
-   - Fallback lokal untuk halaman default yimg diaktifkan agar halaman tetap tampil apabila API belum berisi data.
-   - Route diagnostik disiapkan di /u/diagnostics.
-
-4. Catatan validasi live
-   Lingkungan eksekusi sandbox tidak dapat melakukan resolve langsung ke script.google.com, sehingga uji live endpoint perlu dilakukan dari browser setelah GitHub Pages dipublish. Buka:
-   https://cakgup.github.io/u/diagnostics
-
-5. Route utama
-   - /u/              : microsite default yimg
-   - /u/yimg          : microsite publik yimg
-   - /u/admin         : dashboard admin
-   - /u/diagnostics   : cek API
-
-Update 2026-05-24 - Visual v2 & Audio/Snow
-- API endpoint tetap menggunakan GAS yang diberikan pengguna.
-- Tombol audio diperkecil menjadi ikon melodi saja tanpa teks.
-- Audio nasyid diupayakan otomatis play setelah halaman dimuat; jika browser memblokir autoplay, audio akan diputar setelah interaksi pertama pengguna.
-- Ditambahkan snow script ringan berbasis DOM/CSS dengan jumlah partikel terbatas agar tetap ringan.
-- Logo diberi animasi zoom in / zoom out looping dan glow agar menyatu dengan background.
-- Tampilan publik diperkuat dengan ornamen islami Turki, aksen warna Palestina, dan optimasi tampilan portrait 1080 x 1920.
-- Validasi sintaks JavaScript menggunakan node --check: OK.
+Catatan:
+- Autoplay audio tetap bergantung kebijakan browser. Jika browser memblokir autoplay bersuara, audio dicoba ulang pada interaksi pertama pengguna.

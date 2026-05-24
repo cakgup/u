@@ -64,7 +64,8 @@
 
     return `
       <main class="public-page" style="${style}">
-        ${options.demoMode ? `<div class="demo-alert"><strong>Mode demo.</strong> API Google Apps Script belum dikonfigurasi, sehingga halaman memakai data contoh dari config.js.</div>` : ""}
+        ${options.demoMode ? `<div class="demo-alert"><strong>Mode demo.</strong> API Google Apps Script belum dikonfigurasi, sehingga halaman memakai data contoh lokal.</div>` : ""}
+        ${options.fallbackMode ? `<div class="demo-alert"><strong>Mode fallback.</strong> API sudah diset, tetapi data default belum dapat dibaca. Halaman tetap ditampilkan agar mudah diakses.</div>` : ""}
         <section class="microsite-card">
           <header class="hero">
             ${banner ? `<div class="hero-bg-image" style="background-image:url('${escapeHtml(banner)}')"></div>` : ""}

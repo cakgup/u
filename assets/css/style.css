@@ -24,7 +24,7 @@ html { scroll-behavior: smooth; }
 body {
   margin: 0;
   min-height: 100vh;
-  font-family: "Plus Jakarta Sans", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   color: var(--ink);
   background:
     radial-gradient(circle at 13% 10%, rgba(255, 105, 0, .28), transparent 32%),
@@ -102,7 +102,7 @@ a { color: inherit; }
   position: fixed;
   right: -22px;
   top: 5vh;
-  font-family: "Amiri", serif;
+  font-family: Georgia, "Times New Roman", serif;
   font-size: clamp(92px, 18vw, 220px);
   font-weight: 700;
   color: rgba(75,0,110,.055);
@@ -198,7 +198,7 @@ a { color: inherit; }
 }
 
 .islamic-script {
-  font-family: "Amiri", serif;
+  font-family: Georgia, "Times New Roman", serif;
   font-size: clamp(28px, 8vw, 48px);
   color: var(--yimg-purple);
   line-height: 1.2;
@@ -240,7 +240,7 @@ a { color: inherit; }
   gap: 12px;
   margin: 8px 0 22px;
   color: rgba(75,0,110,.72);
-  font-family: "Amiri", serif;
+  font-family: Georgia, "Times New Roman", serif;
   font-size: 20px;
 }
 
@@ -410,7 +410,7 @@ a { color: inherit; }
 
 .audio-fab span {
   display: block;
-  font-family: "Amiri", serif;
+  font-family: Georgia, "Times New Roman", serif;
   font-size: 15px;
   line-height: 1.05;
 }

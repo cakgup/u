@@ -20,12 +20,20 @@
         return { type: "admin", section: third || "dashboard" };
       }
 
+      if (second === "diagnostics" || second === "cek-api") {
+        return { type: "diagnostics" };
+      }
+
       return { type: "public", username: normalizeUsername(second) || DEFAULT_USERNAME };
     }
 
     // Local testing with plain /admin or /{username}
     if (parts[0] === "admin") {
       return { type: "admin", section: parts[1] || "dashboard" };
+    }
+
+    if (parts[0] === "diagnostics" || parts[0] === "cek-api") {
+      return { type: "diagnostics" };
     }
 
     if (parts[0] && parts[0] !== "index.html" && parts[0] !== "404.html") {
@@ -76,32 +84,76 @@
     `;
   }
 
+  function renderPublic(profile, links, options = {}) {
+    document.title = profile.display_name || config.APP_NAME || "CakGup Microsite";
+    const root = document.getElementById("app");
+    root.innerHTML = window.CakgupMicrosite.renderMicrositeMarkup(profile, links, options);
+    window.CakgupMicrosite.bindPublicInteractions(profile, links);
+  }
+
+  function shouldUseFallback(username) {
+    return Boolean(config.PUBLIC_FALLBACK_ENABLED) && normalizeUsername(username) === normalizeUsername(DEFAULT_USERNAME);
+  }
+
+  function renderDefaultFallback(reason = "") {
+    const profile = { ...(config.DEFAULT_PROFILE || {}), fallback_reason: reason };
+    const links = config.DEFAULT_LINKS || [];
+    renderPublic(profile, links, { demoMode: !window.CakgupApi.isConfigured(), fallbackMode: window.CakgupApi.isConfigured() });
+  }
+
   async function showPublic(username) {
     renderLoading();
 
     try {
       const data = await window.CakgupMicrosite.loadMicrosite(username);
       if (!data.success) {
+        if (shouldUseFallback(username)) {
+          renderDefaultFallback(data.message || "Data API belum tersedia.");
+          return;
+        }
         renderNotFound(username, data.message);
         return;
       }
 
       const profile = data.microsite || config.DEFAULT_PROFILE;
       const links = Array.isArray(data.links) ? data.links : [];
-      document.title = profile.display_name || config.APP_NAME || "CakGup Microsite";
-      const root = document.getElementById("app");
-      root.innerHTML = window.CakgupMicrosite.renderMicrositeMarkup(profile, links, { demoMode: data.demoMode });
-      window.CakgupMicrosite.bindPublicInteractions(profile, links);
+      renderPublic(profile, links, { demoMode: data.demoMode });
     } catch (error) {
-      if (!window.CakgupApi.isConfigured()) {
-        const profile = config.DEFAULT_PROFILE;
-        const links = config.DEFAULT_LINKS || [];
-        const root = document.getElementById("app");
-        root.innerHTML = window.CakgupMicrosite.renderMicrositeMarkup(profile, links, { demoMode: true });
-        window.CakgupMicrosite.bindPublicInteractions(profile, links);
+      if (!window.CakgupApi.isConfigured() || shouldUseFallback(username)) {
+        renderDefaultFallback(error.message || "Gagal menghubungi API.");
         return;
       }
       renderNotFound(username, error.message || "Gagal menghubungi API.");
+    }
+  }
+
+  async function showDiagnostics() {
+    const root = document.getElementById("app");
+    root.innerHTML = `
+      <main class="admin-page">
+        <section class="panel login-card">
+          <img class="login-logo" src="${BASE_PATH}/assets/img/logo-yimg.png" alt="Logo YIMG">
+          <h1 class="login-title gradient-text">Cek API Microsite</h1>
+          <p class="login-desc">Memvalidasi koneksi frontend ke Google Apps Script.</p>
+          <div id="diagnosticsResult" class="message">Menjalankan pengecekan...</div>
+          <div class="button-row" style="justify-content:center;margin-top:14px">
+            <a class="primary-button" href="${BASE_PATH}/">Buka Microsite</a>
+            <a class="outline-button" href="${BASE_PATH}/admin">Admin</a>
+          </div>
+        </section>
+      </main>
+    `;
+
+    const result = document.getElementById("diagnosticsResult");
+    try {
+      if (!window.CakgupApi.isConfigured()) throw new Error("API_BASE_URL belum dikonfigurasi.");
+      const ping = await window.CakgupApi.get({ action: "ping" });
+      const site = await window.CakgupApi.get({ action: "getMicrosite", username: DEFAULT_USERNAME });
+      result.className = "message message-success";
+      result.textContent = `API aktif. Ping: ${ping.message || "OK"}. Data ${DEFAULT_USERNAME}: ${site.success ? "tersedia" : "belum tersedia"}.`;
+    } catch (error) {
+      result.className = "message message-error";
+      result.textContent = error.message || "API belum dapat diakses.";
     }
   }
 
@@ -110,6 +162,11 @@
 
     if (route.type === "admin") {
       window.CakgupAdmin.renderAdminPage();
+      return;
+    }
+
+    if (route.type === "diagnostics") {
+      showDiagnostics();
       return;
     }
 

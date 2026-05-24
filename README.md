@@ -40,6 +40,19 @@ u/
     └── Code.gs
 ```
 
+
+## Endpoint API yang sudah diset
+
+Frontend pada paket ini sudah disesuaikan dengan endpoint Google Apps Script berikut:
+
+```text
+https://script.google.com/macros/s/AKfycbybAACwBMZeiOERkFpZruMwgVWpmB45ddToZMScbGOPOJY2DRS0cfdBLJtHgaDnxxDzjw/exec
+```
+
+```javascript
+API_BASE_URL: "https://script.google.com/macros/s/AKfycbybAACwBMZeiOERkFpZruMwgVWpmB45ddToZMScbGOPOJY2DRS0cfdBLJtHgaDnxxDzjw/exec"
+```
+
 ## Setup GitHub Pages
 
 1. Buat repository GitHub bernama `u` pada akun/organisasi `cakgup`.
@@ -116,13 +129,13 @@ assets/js/config.js
 Ganti nilai berikut:
 
 ```javascript
-API_BASE_URL: "PASTE_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE"
+API_BASE_URL: "https://script.google.com/macros/s/AKfycbybAACwBMZeiOERkFpZruMwgVWpmB45ddToZMScbGOPOJY2DRS0cfdBLJtHgaDnxxDzjw/exec"
 ```
 
 menjadi URL Web App Google Apps Script, contoh:
 
 ```javascript
-API_BASE_URL: "https://script.google.com/macros/s/AKfycbxxxxxxxxxxxxxxxx/exec"
+API_BASE_URL: "https://script.google.com/macros/s/AKfycbybAACwBMZeiOERkFpZruMwgVWpmB45ddToZMScbGOPOJY2DRS0cfdBLJtHgaDnxxDzjw/exec"
 ```
 
 ## Cara Menggunakan Admin
@@ -153,3 +166,29 @@ Browser modern biasanya memblokir audio autoplay. Karena itu backsound nasyid di
 - Simpan token admin di Google Apps Script Properties.
 - File frontend GitHub Pages bersifat publik.
 - Aksi admin tetap divalidasi oleh Google Apps Script melalui token.
+
+
+## Validasi Cepat
+
+Setelah repository `u` ter-publish di GitHub Pages, buka halaman berikut untuk mengecek koneksi API dari browser:
+
+```text
+https://cakgup.github.io/u/diagnostics
+```
+
+Halaman tersebut menjalankan pengecekan ringan ke endpoint `ping` dan `getMicrosite` untuk username default `yimg`.
+
+Endpoint yang diuji:
+
+```text
+https://script.google.com/macros/s/AKfycbybAACwBMZeiOERkFpZruMwgVWpmB45ddToZMScbGOPOJY2DRS0cfdBLJtHgaDnxxDzjw/exec?action=ping
+https://script.google.com/macros/s/AKfycbybAACwBMZeiOERkFpZruMwgVWpmB45ddToZMScbGOPOJY2DRS0cfdBLJtHgaDnxxDzjw/exec?action=getMicrosite&username=yimg
+```
+
+## Optimasi Ringan
+
+- Font eksternal dihilangkan agar halaman tidak bergantung pada Google Fonts.
+- Logo dioptimalkan agar ukuran aset lebih kecil.
+- Audio `nasyid.mp3` memakai `preload=none`, sehingga tidak dimuat otomatis saat halaman dibuka.
+- Frontend hanya memanggil satu request utama untuk memuat data microsite publik.
+- Jika data default belum tersedia di API, halaman utama tetap dapat tampil dengan fallback lokal agar mudah diakses.

@@ -6,10 +6,11 @@ window.CAKGUP_MICROSITE_CONFIG = {
   APP_NAME: "Microsite Yayasan Indonesia Maju Gemilang",
   BASE_PATH: "/u",
   DEFAULT_USERNAME: "yimg",
-  API_BASE_URL: "PASTE_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE",
+  API_BASE_URL: "https://script.google.com/macros/s/AKfycbybAACwBMZeiOERkFpZruMwgVWpmB45ddToZMScbGOPOJY2DRS0cfdBLJtHgaDnxxDzjw/exec",
   SESSION_KEY: "cakgup_microsite_admin_session",
   API_TOKEN_SESSION_KEY: "cakgup_microsite_api_token",
-  FETCH_TIMEOUT_MS: 15000,
+  FETCH_TIMEOUT_MS: 12000,
+  PUBLIC_FALLBACK_ENABLED: true,
   DEFAULT_PROFILE: {
     id: "demo-yimg",
     username: "yimg",

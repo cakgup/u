@@ -67,9 +67,9 @@
             <div class="logo-aura">
               <img class="brand-logo" src="${escapeHtml(logo)}" alt="Logo Yayasan Indonesia Maju Gemilang" loading="eager">
             </div>
-            <section id="prayerSchedule" class="prayer-card" aria-label="Jadwal shalat DKI Jakarta dan sekitarnya">
+            <section id="prayerSchedule" class="prayer-card" aria-label="Jadwal shalat Kota Bekasi dan sekitarnya">
               <p class="prayer-kicker">Waktu Shalat untuk Daerah</p>
-              <h2 class="prayer-city">DKI Jakarta dan Sekitarnya</h2>
+              <h2 class="prayer-city">Kota Bekasi dan Sekitarnya</h2>
               <div class="prayer-next" aria-live="polite">
                 <span>
                   <small>Berikutnya</small>

@@ -1199,3 +1199,188 @@ img { max-width: 100%; display: block; }
   .script-translation,
   .hero-desc { font-size: 13px !important; }
 }
+
+
+/* v10: presisi logo dalam lingkaran + akses admin tersembunyi berbentuk bulan. */
+.logo-aura {
+  width: clamp(118px, 26vw, 176px) !important;
+  height: clamp(118px, 26vw, 176px) !important;
+  margin-top: 2px !important;
+  margin-bottom: 12px !important;
+}
+.brand-logo {
+  width: 76% !important;
+  height: 76% !important;
+  object-fit: contain !important;
+  object-position: center center !important;
+  margin: auto !important;
+  transform-origin: center center;
+}
+.logo-aura::before {
+  inset: -3% !important;
+}
+.logo-aura::after {
+  inset: -14% !important;
+  opacity: .38 !important;
+}
+.admin-moon-button {
+  text-decoration: none;
+  width: 34px !important;
+  height: 34px !important;
+  top: 16px !important;
+  right: 16px !important;
+  left: auto !important;
+  display: grid;
+  place-items: center;
+  font-size: 17px !important;
+  line-height: 1;
+  color: rgba(249, 232, 191, .74);
+  opacity: .42;
+  border-color: rgba(227,190,113,.22);
+  background: rgba(6, 15, 13, .42);
+  backdrop-filter: blur(8px);
+  transition: opacity .2s ease, transform .2s ease, border-color .2s ease;
+  z-index: 4;
+}
+.admin-moon-button:hover,
+.admin-moon-button:focus-visible {
+  opacity: .9;
+  transform: translateY(-1px) scale(1.03);
+  border-color: rgba(227,190,113,.52);
+  outline: none;
+}
+
+@media (max-width: 720px) {
+  .logo-aura {
+    width: clamp(112px, 30vw, 136px) !important;
+    height: clamp(112px, 30vw, 136px) !important;
+    margin-top: 0 !important;
+    margin-bottom: 10px !important;
+  }
+  .brand-logo {
+    width: 74% !important;
+    height: 74% !important;
+  }
+  .admin-moon-button {
+    width: 32px !important;
+    height: 32px !important;
+    top: 14px !important;
+    right: 14px !important;
+    font-size: 16px !important;
+    opacity: .36;
+  }
+}
+
+.preview-screen .logo-aura {
+  width: 112px !important;
+  height: 112px !important;
+}
+.preview-screen .brand-logo {
+  width: 74% !important;
+  height: 74% !important;
+}
+.preview-screen .admin-moon-button {
+  width: 28px !important;
+  height: 28px !important;
+  top: 12px !important;
+  right: 12px !important;
+  font-size: 14px !important;
+  pointer-events: none;
+}
+
+
+/* v11: bingkai khusus area ayat dan arti agar lebih rapi, fokus, dan islami. */
+.ayah-frame {
+  width: min(100%, 560px);
+  margin: 12px auto 0;
+  padding: 16px 18px 18px;
+  position: relative;
+  text-align: center;
+  border: 1px solid rgba(227, 190, 113, .28);
+  border-radius: 24px;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.045), rgba(255,255,255,.018)),
+    radial-gradient(circle at 50% 0%, rgba(227,190,113,.10), transparent 58%),
+    rgba(4, 17, 14, .24);
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,.035),
+    0 18px 42px rgba(0,0,0,.16);
+  backdrop-filter: blur(4px);
+}
+.ayah-frame::before,
+.ayah-frame::after {
+  content: "۞";
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 26px;
+  height: 26px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  color: rgba(227,190,113,.70);
+  font-size: 13px;
+  background: rgba(6,15,13,.42);
+  border: 1px solid rgba(227,190,113,.20);
+}
+.ayah-frame::before { left: -13px; }
+.ayah-frame::after { right: -13px; }
+.ayah-frame .compact-divider {
+  margin: 0 auto 8px !important;
+  opacity: .78;
+}
+.ayah-frame .arabic-script {
+  margin: 4px auto 6px !important;
+}
+.ayah-frame .script-translation {
+  margin-top: 8px !important;
+}
+
+@media (max-width: 720px) {
+  .ayah-frame {
+    width: min(100%, 340px);
+    margin-top: 10px;
+    padding: 12px 14px 14px;
+    border-radius: 20px;
+  }
+  .ayah-frame::before,
+  .ayah-frame::after {
+    width: 22px;
+    height: 22px;
+    font-size: 11px;
+  }
+  .ayah-frame::before { left: -9px; }
+  .ayah-frame::after { right: -9px; }
+  .ayah-frame .arabic-script {
+    font-size: clamp(20px, 6.8vw, 29px) !important;
+    max-width: 10.8em;
+  }
+  .ayah-frame .script-translation {
+    max-width: 27ch !important;
+    font-size: clamp(12px, 3.45vw, 14px) !important;
+    line-height: 1.7 !important;
+  }
+}
+
+@media (max-width: 390px) {
+  .ayah-frame {
+    width: min(100%, 318px);
+    padding: 11px 12px 13px;
+  }
+  .ayah-frame .arabic-script { font-size: 22px !important; }
+  .ayah-frame .script-translation { font-size: 12px !important; }
+}
+
+.preview-screen .ayah-frame {
+  width: min(100%, 300px);
+  padding: 10px 12px 12px;
+  border-radius: 18px;
+}
+.preview-screen .ayah-frame::before,
+.preview-screen .ayah-frame::after {
+  width: 18px;
+  height: 18px;
+  font-size: 9px;
+}
+.preview-screen .ayah-frame::before { left: -8px; }
+.preview-screen .ayah-frame::after { right: -8px; }

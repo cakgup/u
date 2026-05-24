@@ -65,13 +65,15 @@
             <div class="hero-ornament ornament-left" aria-hidden="true"></div>
             <div class="hero-ornament ornament-right" aria-hidden="true"></div>
             <div class="lantern lantern-left" aria-hidden="true">۞</div>
-            <div class="lantern lantern-right" aria-hidden="true">۞</div>
+            <a class="lantern lantern-right admin-moon-button" href="${BASE_PATH}/admin" aria-label="Login admin" title="Admin">☾</a>
             <div class="logo-aura">
               <img class="brand-logo" src="${escapeHtml(logo)}" alt="Logo Yayasan Indonesia Maju Gemilang" loading="eager">
             </div>
-            <div class="gold-divider compact-divider"><span>◆</span></div>
-            <p class="arabic-script">${escapeHtml(p.islamic_script)}</p>
-            <p class="script-translation">“${escapeHtml(p.islamic_translation || "Dan tolong-menolonglah kamu dalam kebajikan dan takwa.")}”</p>
+            <div class="ayah-frame" aria-label="Ayat dan arti">
+              <div class="gold-divider compact-divider"><span>◆</span></div>
+              <p class="arabic-script">${escapeHtml(p.islamic_script)}</p>
+              <p class="script-translation">“${escapeHtml(p.islamic_translation || "Dan tolong-menolonglah kamu dalam kebajikan dan takwa.")}”</p>
+            </div>
             <p class="hero-desc">${escapeHtml(p.bio)}</p>
           </section>
 

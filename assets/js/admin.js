@@ -54,7 +54,7 @@
           ${!window.CakgupApi.isConfigured() ? `<p class="message message-error">API_BASE_URL belum dikonfigurasi.</p>` : ""}
           <form id="loginForm" class="login-form">
             <label class="label" for="tokenInput">Password Admin</label>
-            <input id="tokenInput" class="input" type="password" autocomplete="current-password" placeholder="Contoh: cakgup" ${!window.CakgupApi.isConfigured() ? "disabled" : ""}>
+            <input id="tokenInput" class="input" type="password" autocomplete="current-password" placeholder="Konfirmasi Coach Fahmi" ${!window.CakgupApi.isConfigured() ? "disabled" : ""}>
             <div class="button-row admin-actions">
               <button class="primary-button" type="submit" ${!window.CakgupApi.isConfigured() ? "disabled" : ""}>Masuk Admin</button>
               <a class="outline-button" href="${BASE_PATH}/">Lihat Microsite</a>

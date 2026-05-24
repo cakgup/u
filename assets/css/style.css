@@ -1384,3 +1384,162 @@ img { max-width: 100%; display: block; }
 }
 .preview-screen .ayah-frame::before { left: -8px; }
 .preview-screen .ayah-frame::after { right: -8px; }
+
+
+/* v12: mengganti deskripsi yayasan menjadi jadwal shalat, mengikuti pola komponen waktu shalat pada pentest-djpb. */
+.prayer-card {
+  width: min(100%, 430px);
+  margin: 16px auto 0;
+  padding: 14px 14px 13px;
+  text-align: center;
+  border-radius: 24px;
+  border: 1px solid rgba(227, 190, 113, .25);
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.055), rgba(255,255,255,.02)),
+    radial-gradient(circle at 50% 0%, rgba(227,190,113,.12), transparent 64%),
+    rgba(4, 17, 14, .28);
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,.03),
+    0 16px 34px rgba(0,0,0,.16);
+  backdrop-filter: blur(5px);
+}
+.prayer-kicker {
+  margin: 0;
+  color: rgba(249,232,191,.74);
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+}
+.prayer-city {
+  margin: 4px 0 11px;
+  color: var(--gold-soft);
+  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+  font-size: clamp(14px, 2vw, 17px);
+  line-height: 1.25;
+}
+.prayer-next {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 10px;
+  margin: 0 auto 10px;
+  padding: 10px 12px;
+  border-radius: 18px;
+  background: rgba(0,0,0,.18);
+  border: 1px solid rgba(227,190,113,.18);
+  text-align: left;
+}
+.prayer-next small {
+  display: block;
+  margin-bottom: 2px;
+  color: rgba(238,244,239,.56);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+.prayer-next strong {
+  display: block;
+  color: #fff;
+  font-size: 18px;
+  line-height: 1.1;
+}
+.prayer-next b {
+  color: var(--gold-soft);
+  font-size: 26px;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+.prayer-times {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 6px;
+}
+.prayer-chip {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+  padding: 8px 4px 7px;
+  border-radius: 14px;
+  background: rgba(255,255,255,.035);
+  border: 1px solid rgba(255,255,255,.07);
+}
+.prayer-chip small {
+  color: rgba(238,244,239,.66);
+  font-size: 10px;
+  font-weight: 800;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.prayer-chip b {
+  color: rgba(255,255,255,.9);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+}
+.prayer-chip.is-next {
+  background: linear-gradient(180deg, rgba(227,190,113,.20), rgba(227,190,113,.07));
+  border-color: rgba(227,190,113,.42);
+  box-shadow: 0 0 0 1px rgba(227,190,113,.06);
+}
+.prayer-chip.is-next b,
+.prayer-chip.is-next small { color: #fff4cf; }
+.prayer-date {
+  margin: 9px 0 0;
+  color: rgba(238,244,239,.54);
+  font-size: 11px;
+  line-height: 1.45;
+}
+.prayer-card.is-error .prayer-next b { font-size: 18px; }
+
+@media (max-width: 720px) {
+  .prayer-card {
+    width: min(100%, 332px);
+    margin-top: 12px;
+    padding: 12px 12px 11px;
+    border-radius: 20px;
+  }
+  .prayer-city {
+    margin-bottom: 9px;
+    font-size: 13px;
+  }
+  .prayer-next {
+    padding: 8px 10px;
+    border-radius: 16px;
+  }
+  .prayer-next strong { font-size: 16px; }
+  .prayer-next b { font-size: 22px; }
+  .prayer-times { gap: 5px; }
+  .prayer-chip {
+    padding: 7px 3px 6px;
+    border-radius: 12px;
+  }
+  .prayer-chip small { font-size: 9px; }
+  .prayer-chip b { font-size: 11px; }
+  .link-list { margin-top: 14px !important; }
+}
+
+@media (max-width: 390px) {
+  .prayer-card { width: min(100%, 306px); }
+  .prayer-kicker { font-size: 9px; letter-spacing: .14em; }
+  .prayer-next b { font-size: 20px; }
+  .prayer-chip small { font-size: 8.5px; }
+  .prayer-chip b { font-size: 10.5px; }
+}
+
+.preview-screen .prayer-card {
+  width: min(100%, 286px);
+  margin-top: 10px;
+  padding: 10px 10px 9px;
+  border-radius: 18px;
+}
+.preview-screen .prayer-kicker { font-size: 8px; }
+.preview-screen .prayer-city { font-size: 11px; margin-bottom: 7px; }
+.preview-screen .prayer-next { padding: 7px 8px; margin-bottom: 8px; }
+.preview-screen .prayer-next small { font-size: 8px; }
+.preview-screen .prayer-next strong { font-size: 13px; }
+.preview-screen .prayer-next b { font-size: 18px; }
+.preview-screen .prayer-chip { padding: 5px 2px 4px; border-radius: 9px; }
+.preview-screen .prayer-chip small { font-size: 7.5px; }
+.preview-screen .prayer-chip b { font-size: 9px; }
+.preview-screen .prayer-date { font-size: 8px; margin-top: 6px; }

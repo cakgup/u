@@ -74,7 +74,25 @@
               <p class="arabic-script">${escapeHtml(p.islamic_script)}</p>
               <p class="script-translation">“${escapeHtml(p.islamic_translation || "Dan tolong-menolonglah kamu dalam kebajikan dan takwa.")}”</p>
             </div>
-            <p class="hero-desc">${escapeHtml(p.bio)}</p>
+            <section id="prayerSchedule" class="prayer-card" aria-label="Jadwal shalat DKI Jakarta dan sekitarnya">
+              <p class="prayer-kicker">Waktu Shalat untuk Daerah</p>
+              <h2 class="prayer-city">DKI Jakarta dan Sekitarnya</h2>
+              <div class="prayer-next" aria-live="polite">
+                <span>
+                  <small>Berikutnya</small>
+                  <strong id="prayerNextName">Memuat</strong>
+                </span>
+                <b id="prayerNextTime">--:--</b>
+              </div>
+              <div id="prayerTimes" class="prayer-times">
+                <span class="prayer-chip"><small>Subuh</small><b>--:--</b></span>
+                <span class="prayer-chip"><small>Dzuhur</small><b>--:--</b></span>
+                <span class="prayer-chip"><small>Ashar</small><b>--:--</b></span>
+                <span class="prayer-chip"><small>Maghrib</small><b>--:--</b></span>
+                <span class="prayer-chip"><small>Isya</small><b>--:--</b></span>
+              </div>
+              <p id="prayerDate" class="prayer-date">Memuat jadwal harian...</p>
+            </section>
           </section>
 
 
@@ -184,9 +202,126 @@
     }
   }
 
+
+  function getJakartaDateParts() {
+    const formatter = new Intl.DateTimeFormat("en-CA", {
+      timeZone: config.PRAYER_SCHEDULE?.timezone || "Asia/Jakarta",
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit"
+    });
+    const parts = Object.fromEntries(formatter.formatToParts(new Date()).map((part) => [part.type, part.value]));
+    return { year: parts.year, month: parts.month, day: parts.day, iso: `${parts.year}-${parts.month}-${parts.day}` };
+  }
+
+  function getJakartaMinutesNow() {
+    const formatter = new Intl.DateTimeFormat("en-GB", {
+      timeZone: config.PRAYER_SCHEDULE?.timezone || "Asia/Jakarta",
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: false
+    });
+    const [hour, minute] = formatter.format(new Date()).split(":").map(Number);
+    return (hour || 0) * 60 + (minute || 0);
+  }
+
+  function timeToMinutes(value) {
+    const match = String(value || "").match(/(\d{1,2})[:.](\d{2})/);
+    if (!match) return null;
+    return Number(match[1]) * 60 + Number(match[2]);
+  }
+
+  function normalizePrayerData(jadwal = {}) {
+    const rows = [
+      ["Subuh", jadwal.subuh],
+      ["Dzuhur", jadwal.dzuhur],
+      ["Ashar", jadwal.ashar],
+      ["Maghrib", jadwal.maghrib],
+      ["Isya", jadwal.isya]
+    ].map(([name, time]) => ({ name, time: String(time || "--:--").replace(".", ":") }));
+    return {
+      date: jadwal.tanggal || "Hari ini",
+      rows
+    };
+  }
+
+  async function fetchPrayerSchedule() {
+    const scheduleConfig = config.PRAYER_SCHEDULE || {};
+    const date = getJakartaDateParts();
+    const cacheKey = `${scheduleConfig.cache_key || "cakgup_prayer_schedule"}_${date.iso}`;
+
+    try {
+      const cached = JSON.parse(localStorage.getItem(cacheKey) || "null");
+      if (cached && cached.saved_at && Date.now() - cached.saved_at < 1000 * 60 * 60 * 10) return cached.data;
+    } catch (error) {
+      // Abaikan cache rusak.
+    }
+
+    const base = String(scheduleConfig.api_base_url || "https://api.myquran.com/v2/sholat/jadwal/1301").replace(/\/$/, "");
+    const url = `${base}/${date.year}/${date.month}/${date.day}`;
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 4500);
+    try {
+      const response = await fetch(url, { signal: controller.signal, cache: "no-store" });
+      if (!response.ok) throw new Error("Jadwal shalat belum dapat dimuat.");
+      const json = await response.json();
+      const jadwal = json?.data?.jadwal || json?.jadwal || json?.data || {};
+      const data = normalizePrayerData(jadwal);
+      localStorage.setItem(cacheKey, JSON.stringify({ saved_at: Date.now(), data }));
+      return data;
+    } finally {
+      clearTimeout(timeout);
+    }
+  }
+
+  function renderPrayerSchedule(data) {
+    const card = document.getElementById("prayerSchedule");
+    const list = document.getElementById("prayerTimes");
+    const nextName = document.getElementById("prayerNextName");
+    const nextTime = document.getElementById("prayerNextTime");
+    const date = document.getElementById("prayerDate");
+    if (!card || !list || !nextName || !nextTime) return;
+
+    const now = getJakartaMinutesNow();
+    const rows = Array.isArray(data?.rows) ? data.rows : [];
+    let next = rows.find((row) => {
+      const minutes = timeToMinutes(row.time);
+      return minutes !== null && minutes >= now;
+    }) || rows[0] || { name: "--", time: "--:--" };
+
+    nextName.textContent = next.name;
+    nextTime.textContent = next.time;
+    list.innerHTML = rows.map((row) => `
+      <span class="prayer-chip ${row.name === next.name ? "is-next" : ""}">
+        <small>${escapeHtml(row.name)}</small>
+        <b>${escapeHtml(row.time)}</b>
+      </span>
+    `).join("");
+    if (date) date.textContent = data?.date ? `${data.date} · WIB` : "WIB";
+    card.classList.add("is-loaded");
+  }
+
+  async function setupPrayerSchedule() {
+    const scheduleConfig = config.PRAYER_SCHEDULE || {};
+    if (scheduleConfig.enabled === false || String(scheduleConfig.enabled).toLowerCase() === "false") return;
+    const card = document.getElementById("prayerSchedule");
+    if (!card) return;
+    try {
+      const data = await fetchPrayerSchedule();
+      renderPrayerSchedule(data);
+    } catch (error) {
+      const date = document.getElementById("prayerDate");
+      const nextName = document.getElementById("prayerNextName");
+      if (nextName) nextName.textContent = "Belum tersedia";
+      if (date) date.textContent = "Jadwal shalat belum dapat dimuat. Coba refresh halaman.";
+      card.classList.add("is-error");
+    }
+  }
+
   function bindPublicInteractions(profile = {}) {
     setupAudio(profile);
     setupSnow(profile);
+    setupPrayerSchedule();
     document.getElementById("shareFab")?.addEventListener("click", async () => {
       const url = profile.microsite_url || location.href;
       try {

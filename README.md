@@ -192,3 +192,14 @@ https://script.google.com/macros/s/AKfycbybAACwBMZeiOERkFpZruMwgVWpmB45ddToZMScb
 - Audio `nasyid.mp3` memakai `preload=none`, sehingga tidak dimuat otomatis saat halaman dibuka.
 - Frontend hanya memanggil satu request utama untuk memuat data microsite publik.
 - Jika data default belum tersedia di API, halaman utama tetap dapat tampil dengan fallback lokal agar mudah diakses.
+
+## Update Visual v2
+
+Perubahan terbaru:
+
+- Backsound nasyid diupayakan otomatis berjalan saat halaman publik dibuka.
+- Karena kebijakan browser modern dapat memblokir autoplay audio bersuara, sistem juga menyiapkan fallback: audio akan mulai setelah interaksi pertama pengguna seperti klik, sentuh, tekan tombol, atau scroll.
+- Tombol audio dibuat lebih kecil dan hanya menggunakan ikon melodi tanpa teks.
+- Ditambahkan efek salju ringan berbasis CSS/JavaScript.
+- Logo utama diberi animasi zoom in/zoom out looping agar menyatu dengan background.
+- Layout publik diperindah dengan ornamen Turki Islami dan aksen warna Palestina, dengan prioritas tampilan portrait 1080 x 1920.

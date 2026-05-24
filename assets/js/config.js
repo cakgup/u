@@ -28,13 +28,15 @@ window.CAKGUP_MICROSITE_CONFIG = {
     secondary_color: "#D40000",
     accent_color: "#4B006E",
     button_style: "rounded",
-    islamic_script: "بِسْمِ اللّٰهِ الرَّحْمٰنِ الرَّحِيْمِ",
+    islamic_script: "وَتَعَاوَنُوا عَلَى الْبِرِّ وَالتَّقْوَى",
     show_islamic_script: true,
     audio_url: "/u/assets/audio/nasyid.mp3",
     audio_title: "Nasyid Islami",
     audio_enabled: true,
     audio_loop: true,
-    audio_volume: 0.45
+    audio_volume: 0.38,
+    audio_autoplay: true,
+    snow_enabled: true
   },
   DEFAULT_LINKS: [
     { id: "demo-1", title: "Tentang Yayasan", url: "https://example.com", icon: "info", button_color: "#C44A00", text_color: "#FFFFFF", sort_order: 1 },

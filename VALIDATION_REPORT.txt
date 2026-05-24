@@ -32,3 +32,12 @@ Tanggal validasi: 2026-05-24
    - /u/yimg          : microsite publik yimg
    - /u/admin         : dashboard admin
    - /u/diagnostics   : cek API
+
+Update 2026-05-24 - Visual v2 & Audio/Snow
+- API endpoint tetap menggunakan GAS yang diberikan pengguna.
+- Tombol audio diperkecil menjadi ikon melodi saja tanpa teks.
+- Audio nasyid diupayakan otomatis play setelah halaman dimuat; jika browser memblokir autoplay, audio akan diputar setelah interaksi pertama pengguna.
+- Ditambahkan snow script ringan berbasis DOM/CSS dengan jumlah partikel terbatas agar tetap ringan.
+- Logo diberi animasi zoom in / zoom out looping dan glow agar menyatu dengan background.
+- Tampilan publik diperkuat dengan ornamen islami Turki, aksen warna Palestina, dan optimasi tampilan portrait 1080 x 1920.
+- Validasi sintaks JavaScript menggunakan node --check: OK.

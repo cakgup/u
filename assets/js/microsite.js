@@ -94,6 +94,7 @@
         </section>
         <footer class="footer">© ${new Date().getFullYear()} Yayasan Indonesia Maju Gemilang · Dibuat dengan CakGup Microsite</footer>
         ${options.enableAudio !== false ? renderAudioControl(profile) : ""}
+        <div id="snowLayer" class="snow-layer" aria-hidden="true"></div>
         <div id="toast" class="toast" role="status" aria-live="polite"></div>
       </main>
     `;
@@ -120,10 +121,9 @@
     const loop = profile.audio_loop !== false && String(profile.audio_loop) !== "false";
     const volume = Number(profile.audio_volume || 0.45);
     return `
-      <audio id="nasyidAudio" src="${escapeHtml(audioUrl)}" ${loop ? "loop" : ""} preload="none" data-volume="${escapeHtml(String(volume))}"></audio>
-      <button id="audioFab" class="audio-fab" type="button" aria-label="Putar backsound islami">
-        <span lang="ar" dir="rtl">نَشِيد</span>
-        <small>PLAY</small>
+      <audio id="nasyidAudio" src="${escapeHtml(audioUrl)}" ${loop ? "loop" : ""} preload="none" data-volume="${escapeHtml(String(volume))}" data-autoplay="true"></audio>
+      <button id="audioFab" class="audio-fab" type="button" aria-label="Putar atau hentikan backsound islami" title="Nasyid">
+        <span class="melody-icon" aria-hidden="true">♫</span>
       </button>
     `;
   }
@@ -166,6 +166,7 @@
     });
 
     bindAudioControl();
+    bindSnowEffect();
   }
 
   function bindAudioControl() {
@@ -176,30 +177,79 @@
     const volume = Number(audio.getAttribute("data-volume") || 0.45);
     audio.volume = Number.isFinite(volume) ? Math.max(0, Math.min(1, volume)) : 0.45;
 
+    let autoplayTried = false;
+
     function setPlayingState(isPlaying) {
       button.classList.toggle("is-playing", isPlaying);
       button.setAttribute("aria-label", isPlaying ? "Hentikan backsound islami" : "Putar backsound islami");
-      const small = button.querySelector("small");
-      if (small) small.textContent = isPlaying ? "STOP" : "PLAY";
+      button.setAttribute("aria-pressed", isPlaying ? "true" : "false");
+    }
+
+    async function playAudio({ silent = false } = {}) {
+      try {
+        audio.volume = Number.isFinite(volume) ? Math.max(0, Math.min(1, volume)) : 0.45;
+        await audio.play();
+        setPlayingState(true);
+        return true;
+      } catch (error) {
+        setPlayingState(false);
+        if (!silent) showToast("Audio belum dapat diputar. Tekan ikon melodi sekali lagi.");
+        return false;
+      }
     }
 
     button.addEventListener("click", async () => {
       if (audio.paused) {
-        try {
-          await audio.play();
-          setPlayingState(true);
-        } catch (error) {
-          showToast("Audio belum dapat diputar. Coba tekan sekali lagi.");
-        }
+        await playAudio();
       } else {
         audio.pause();
         setPlayingState(false);
       }
     });
 
+    function tryAutoplay() {
+      if (autoplayTried || !audio.paused) return;
+      autoplayTried = true;
+      playAudio({ silent: true });
+    }
+
+    function resumeAfterGesture() {
+      if (!audio.paused) return;
+      playAudio({ silent: true });
+    }
+
+    window.setTimeout(tryAutoplay, 650);
+    ["pointerdown", "touchstart", "keydown", "scroll"].forEach((eventName) => {
+      window.addEventListener(eventName, resumeAfterGesture, { once: true, passive: true });
+    });
+
     audio.addEventListener("ended", () => setPlayingState(false));
     audio.addEventListener("pause", () => setPlayingState(false));
     audio.addEventListener("play", () => setPlayingState(true));
+  }
+
+  function bindSnowEffect() {
+    const layer = document.getElementById("snowLayer");
+    if (!layer || layer.dataset.ready === "1") return;
+    layer.dataset.ready = "1";
+
+    const count = window.matchMedia("(max-width: 640px)").matches ? 22 : 34;
+    const fragment = document.createDocumentFragment();
+
+    for (let i = 0; i < count; i += 1) {
+      const flake = document.createElement("span");
+      flake.className = "snowflake";
+      const size = 3 + Math.random() * 5;
+      flake.style.setProperty("--x", `${Math.random() * 100}vw`);
+      flake.style.setProperty("--x-end", `${(Math.random() * 42 - 21).toFixed(1)}vw`);
+      flake.style.setProperty("--size", `${size.toFixed(1)}px`);
+      flake.style.setProperty("--duration", `${12 + Math.random() * 14}s`);
+      flake.style.setProperty("--delay", `${Math.random() * -22}s`);
+      flake.style.setProperty("--opacity", `${0.22 + Math.random() * 0.48}`);
+      fragment.appendChild(flake);
+    }
+
+    layer.appendChild(fragment);
   }
 
   function showToast(message) {

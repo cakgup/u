@@ -1140,13 +1140,13 @@ function testCreateDefaultMicrosite() {
     secondary_color: "#D40000",
     accent_color: "#4B006E",
     button_style: "rounded",
-    islamic_script: "بِسْمِ اللّٰهِ الرَّحْمٰنِ الرَّحِيْمِ",
+    islamic_script: "وَتَعَاوَنُوا عَلَى الْبِرِّ وَالتَّقْوَى",
     show_islamic_script: true,
     audio_url: "/u/assets/audio/nasyid.mp3",
     audio_title: "Nasyid Islami",
     audio_enabled: true,
     audio_loop: true,
-    audio_volume: 0.45,
+    audio_volume: 0.38,
     is_active: true,
     created_by: "admin"
   });

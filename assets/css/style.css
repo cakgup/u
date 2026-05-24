@@ -1543,3 +1543,81 @@ img { max-width: 100%; display: block; }
 .preview-screen .prayer-chip small { font-size: 7.5px; }
 .preview-screen .prayer-chip b { font-size: 9px; }
 .preview-screen .prayer-date { font-size: 8px; margin-top: 6px; }
+
+
+/* v13: hilangkan area ayat/arti, alert fallback publik, dan ikon ornamen kiri. Rapikan logo dengan glow tanpa lingkaran. */
+.demo-alert,
+.lantern-left,
+.ayah-frame {
+  display: none !important;
+}
+
+.hero-panel {
+  min-height: clamp(500px, 64vh, 900px) !important;
+}
+
+.logo-aura {
+  width: clamp(118px, 24vw, 166px) !important;
+  height: clamp(118px, 24vw, 166px) !important;
+  margin-top: 4px !important;
+  margin-bottom: 16px !important;
+  isolation: isolate;
+}
+.logo-aura::before {
+  content: "" !important;
+  display: block !important;
+  position: absolute !important;
+  inset: -42% !important;
+  border: 0 !important;
+  border-radius: 50% !important;
+  background:
+    radial-gradient(circle at center, rgba(255, 248, 218, .34) 0%, rgba(227, 190, 113, .21) 24%, rgba(89, 119, 91, .12) 46%, transparent 70%) !important;
+  box-shadow: none !important;
+  filter: blur(2px);
+  opacity: .95 !important;
+  z-index: -1;
+}
+.logo-aura::after {
+  content: none !important;
+  display: none !important;
+}
+.brand-logo {
+  width: 72% !important;
+  height: 72% !important;
+  filter: drop-shadow(0 14px 24px rgba(0,0,0,.38)) drop-shadow(0 0 18px rgba(255,248,218,.10)) !important;
+}
+
+.prayer-card {
+  margin-top: 10px !important;
+}
+
+@media (max-width: 720px) {
+  .hero-panel {
+    min-height: 500px !important;
+    padding-top: 32px !important;
+  }
+  .logo-aura {
+    width: clamp(108px, 28vw, 126px) !important;
+    height: clamp(108px, 28vw, 126px) !important;
+    margin-bottom: 12px !important;
+  }
+  .brand-logo {
+    width: 72% !important;
+    height: 72% !important;
+  }
+  .prayer-card {
+    margin-top: 8px !important;
+  }
+}
+
+.preview-screen .logo-aura {
+  width: 104px !important;
+  height: 104px !important;
+}
+.preview-screen .brand-logo {
+  width: 72% !important;
+  height: 72% !important;
+}
+.preview-screen .hero-panel {
+  min-height: 540px !important;
+}

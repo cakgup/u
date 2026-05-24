@@ -58,7 +58,7 @@
   }
 
   function renderFallback(reason = "") {
-    renderPublic(config.DEFAULT_PROFILE, config.DEFAULT_LINKS || [], { fallbackMode: Boolean(reason) });
+    renderPublic(config.DEFAULT_PROFILE, config.DEFAULT_LINKS || [], { fallbackMode: false });
   }
 
   async function showPublic(username) {

@@ -58,25 +58,18 @@
 
     return `
       <main class="public-page">
-        ${options.fallbackMode ? `<div class="demo-alert">API belum mengembalikan data aktif. Halaman memakai data cadangan.</div>` : ""}
         <section class="stage" aria-label="Microsite Yayasan Indonesia Maju Gemilang">
           <div class="turkish-frame" aria-hidden="true"></div>
           <section class="hero-panel">
             <div class="hero-ornament ornament-left" aria-hidden="true"></div>
             <div class="hero-ornament ornament-right" aria-hidden="true"></div>
-            <div class="lantern lantern-left" aria-hidden="true">۞</div>
             <a class="lantern lantern-right admin-moon-button" href="${BASE_PATH}/admin" aria-label="Login admin" title="Admin">☾</a>
             <div class="logo-aura">
               <img class="brand-logo" src="${escapeHtml(logo)}" alt="Logo Yayasan Indonesia Maju Gemilang" loading="eager">
             </div>
-            <div class="ayah-frame" aria-label="Ayat dan arti">
-              <div class="gold-divider compact-divider"><span>◆</span></div>
-              <p class="arabic-script">${escapeHtml(p.islamic_script)}</p>
-              <p class="script-translation">“${escapeHtml(p.islamic_translation || "Dan tolong-menolonglah kamu dalam kebajikan dan takwa.")}”</p>
-            </div>
-            <section id="prayerSchedule" class="prayer-card" aria-label="Jadwal shalat DKI Jakarta dan sekitarnya">
+            <section id="prayerSchedule" class="prayer-card" aria-label="Jadwal shalat Kota Bekasi dan sekitarnya">
               <p class="prayer-kicker">Waktu Shalat untuk Daerah</p>
-              <h2 class="prayer-city">DKI Jakarta dan Sekitarnya</h2>
+              <h2 class="prayer-city">Kota Bekasi dan Sekitarnya</h2>
               <div class="prayer-next" aria-live="polite">
                 <span>
                   <small>Berikutnya</small>

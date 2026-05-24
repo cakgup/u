@@ -305,9 +305,21 @@ function getCellValue(sheet, rowIndex, headers, key) {
 
 function parsePostBody(e) {
   if (!e || !e.postData) return {};
-  const raw = e.postData.contents || "";
-  const type = e.postData.type || "";
-  if (type.indexOf("application/json") !== -1) return raw ? JSON.parse(raw) : {};
+  const raw = String(e.postData.contents || "");
+  const type = String(e.postData.type || "").toLowerCase();
+  const trimmed = raw.trim();
+  if (!trimmed) return {};
+
+  // GitHub Pages/frontend mengirim JSON sebagai text/plain untuk menghindari preflight CORS.
+  // Karena itu, body tetap harus diparse sebagai JSON meskipun Content-Type bukan application/json.
+  if (type.indexOf("application/json") !== -1 || trimmed.charAt(0) === "{" || trimmed.charAt(0) === "[") {
+    try {
+      return JSON.parse(trimmed);
+    } catch (error) {
+      return {};
+    }
+  }
+
   const data = {};
   raw.split("&").forEach(pair => {
     if (!pair) return;
@@ -319,9 +331,13 @@ function parsePostBody(e) {
 
 function isValidToken(body) {
   const props = PropertiesService.getScriptProperties();
-  const expected = props.getProperty(PROP_API_TOKEN) || CONFIG.API_TOKEN;
-  const provided = String((body && (body.token || body.password || body.api_token)) || "");
-  return expected && provided && expected === provided;
+  const propertyToken = String(props.getProperty(PROP_API_TOKEN) || "").trim();
+  const defaultToken = String(CONFIG.API_TOKEN || "cakgup").trim();
+  const provided = String((body && (body.token || body.password || body.api_token)) || "").trim();
+
+  // Password default 'cakgup' tetap diterima agar admin sederhana tidak terkunci
+  // meskipun Script Properties belum diset atau berbeda.
+  return Boolean(provided) && (provided === defaultToken || (propertyToken && provided === propertyToken));
 }
 
 function sanitizeUsername(value) {

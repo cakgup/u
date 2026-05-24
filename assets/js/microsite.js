@@ -69,22 +69,12 @@
             <div class="logo-aura">
               <img class="brand-logo" src="${escapeHtml(logo)}" alt="Logo Yayasan Indonesia Maju Gemilang" loading="eager">
             </div>
-            <p class="logo-caption">${escapeHtml(p.short_name || "Indonesia Maju Gemilang")}</p>
-            <h1 class="brand-title">${escapeHtml(p.display_name || "Yayasan Indonesia Maju Gemilang")}</h1>
-            <div class="gold-divider"><span>◆</span></div>
+            <div class="gold-divider compact-divider"><span>◆</span></div>
             <p class="arabic-script">${escapeHtml(p.islamic_script)}</p>
             <p class="script-translation">“${escapeHtml(p.islamic_translation || "Dan tolong-menolonglah kamu dalam kebajikan dan takwa.")}”</p>
             <p class="hero-desc">${escapeHtml(p.bio)}</p>
           </section>
 
-          <section class="mission-card">
-            <div class="mission-medallion">✦</div>
-            <div class="mission-copy">
-              <h2>${escapeHtml(p.tagline || "Bersama, Kita Bisa Mewujudkan Kebaikan")}</h2>
-              <div class="mini-divider"><span>♥</span></div>
-              <p>Setiap langkah kecil Anda adalah bagian dari perubahan besar bagi sesama.</p>
-            </div>
-          </section>
 
           <nav class="link-list" aria-label="Daftar tautan penting">
             ${activeLinks.length ? activeLinks.map(renderLink).join("") : `<div class="empty-links">Belum ada link aktif.</div>`}

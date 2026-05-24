@@ -986,3 +986,211 @@ img { max-width: 100%; display: block; }
   .admin-light .link-card-side { flex-direction: row; align-items: center; }
   .admin-light .phone-shell { width: 100%; height: 720px; }
 }
+
+
+/* v6: elemen pada kotak merah dihapus: caption, judul besar, dan mission card. */
+.logo-caption,
+.brand-title,
+.mission-card {
+  display: none !important;
+}
+.compact-divider {
+  margin-top: 18px;
+  margin-bottom: 8px;
+}
+.hero-panel {
+  min-height: clamp(560px, 61vh, 980px);
+  padding-bottom: clamp(26px, 4vw, 48px);
+}
+.link-list {
+  margin-top: 24px;
+}
+.preview-screen .hero-panel {
+  min-height: 500px;
+}
+.preview-screen .link-list {
+  margin-top: 18px;
+}
+@media (max-width: 720px) {
+  .hero-panel {
+    min-height: 500px;
+  }
+  .link-list {
+    margin-top: 18px;
+  }
+}
+
+/* v7: penyempurnaan tampilan mobile - ayat diperkecil, logo diperkecil, dan layout lebih compact. */
+.public-page {
+  padding-top: 10px;
+  padding-bottom: 104px;
+}
+.stage {
+  padding: clamp(10px, 2.6vw, 22px);
+}
+.hero-panel {
+  min-height: auto !important;
+  padding: clamp(22px, 5vw, 46px) clamp(18px, 5vw, 48px) clamp(24px, 5vw, 44px) !important;
+  border-radius: 30px;
+  text-align: center;
+}
+.logo-aura {
+  width: clamp(108px, 24vw, 178px) !important;
+  height: clamp(108px, 24vw, 178px) !important;
+  margin: 4px auto 14px !important;
+}
+.logo-aura::before {
+  inset: -6%;
+}
+.logo-aura::after {
+  inset: -16%;
+  opacity: .42;
+}
+.brand-logo {
+  width: 96% !important;
+  height: 96% !important;
+}
+.compact-divider {
+  margin-top: 8px !important;
+  margin-bottom: 10px !important;
+}
+.gold-divider::before,
+.gold-divider::after {
+  width: min(14vw, 76px);
+}
+.arabic-script {
+  width: min(100%, 680px);
+  margin: 12px auto 8px !important;
+  text-align: center !important;
+  font-size: clamp(24px, 6vw, 38px) !important;
+  line-height: 1.42 !important;
+  letter-spacing: 0;
+  color: #fff1c4;
+  text-wrap: balance;
+}
+.script-translation {
+  max-width: 34ch !important;
+  margin: 8px auto 0 !important;
+  text-align: center !important;
+  font-size: clamp(13px, 3.25vw, 16px) !important;
+  line-height: 1.65 !important;
+  color: rgba(238,244,239,.76);
+}
+.hero-desc {
+  max-width: 36ch !important;
+  margin: 16px auto 0 !important;
+  text-align: center !important;
+  font-size: clamp(13px, 3.2vw, 16px) !important;
+  line-height: 1.75 !important;
+  color: rgba(238,244,239,.70);
+}
+.link-list {
+  width: min(100%, 760px);
+  margin-top: 18px !important;
+  gap: 12px;
+}
+.bio-link {
+  min-height: 72px;
+  border-radius: 20px;
+  grid-template-columns: 58px 1fr 20px;
+  padding: 12px 16px 12px 12px;
+}
+.link-medallion {
+  width: 48px;
+  height: 48px;
+  border-radius: 16px;
+  font-size: 24px;
+}
+.link-copy strong {
+  font-size: clamp(17px, 4.2vw, 24px);
+}
+.link-copy small {
+  font-size: clamp(11px, 2.9vw, 14px);
+  line-height: 1.35;
+}
+.lantern {
+  width: 36px;
+  height: 36px;
+  top: 18px;
+  font-size: 18px;
+}
+.lantern-left { left: 18px; }
+.lantern-right { right: 18px; }
+.audio-fab,
+.share-fab {
+  width: 46px;
+  height: 46px;
+}
+.share-fab { bottom: calc(72px + var(--safe-bottom)); }
+.audio-fab { font-size: 20px; }
+
+.preview-screen .logo-aura {
+  width: 116px !important;
+  height: 116px !important;
+}
+.preview-screen .hero-panel {
+  min-height: auto !important;
+  padding: 28px 18px 24px !important;
+}
+.preview-screen .arabic-script {
+  font-size: 25px !important;
+  line-height: 1.38 !important;
+}
+.preview-screen .script-translation,
+.preview-screen .hero-desc {
+  font-size: 12px !important;
+  line-height: 1.55 !important;
+}
+.preview-screen .link-list {
+  margin-top: 14px !important;
+}
+
+@media (max-width: 720px) {
+  .public-page { padding-top: 8px; }
+  .stage { padding: 10px; }
+  .hero-panel {
+    padding: 24px 18px 22px !important;
+    border-radius: 28px;
+  }
+  .logo-aura {
+    width: clamp(104px, 30vw, 142px) !important;
+    height: clamp(104px, 30vw, 142px) !important;
+    margin-bottom: 10px !important;
+  }
+  .arabic-script {
+    font-size: clamp(23px, 7.4vw, 32px) !important;
+    line-height: 1.4 !important;
+    max-width: 10.5em;
+  }
+  .script-translation {
+    max-width: 28ch !important;
+    font-size: clamp(13px, 3.7vw, 15px) !important;
+  }
+  .hero-desc {
+    max-width: 30ch !important;
+    font-size: clamp(13px, 3.7vw, 15px) !important;
+  }
+  .link-list {
+    margin-top: 14px !important;
+    gap: 10px;
+  }
+  .bio-link {
+    min-height: 68px;
+    grid-template-columns: 50px 1fr 18px;
+    padding: 10px 14px 10px 10px;
+    border-radius: 18px;
+  }
+  .link-medallion {
+    width: 44px;
+    height: 44px;
+    border-radius: 14px;
+    font-size: 22px;
+  }
+}
+
+@media (max-width: 390px) {
+  .hero-panel { padding-inline: 14px !important; }
+  .arabic-script { font-size: 24px !important; }
+  .script-translation,
+  .hero-desc { font-size: 13px !important; }
+}

@@ -94,7 +94,7 @@
           </nav>
 
           <footer class="footer">
-            <span>© ${new Date().getFullYear()} ${escapeHtml(p.display_name || "Yayasan Indonesia Maju Gemilang")}</span>
+            <span>© ${new Date().getFullYear()} ${escapeHtml(p.display_name || "Yayasan Baghasasi")}</span>
           </footer>
         </section>
 

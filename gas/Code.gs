@@ -10,6 +10,8 @@ const CONFIG = {
   SHEET_META: "microsite_meta",
   BASE_MICROSITE_URL: "https://cakgup.github.io/u",
   DEFAULT_USERNAME: "baghasasi",
+  LEGACY_USERNAMES: ["yimg"],
+  LEGACY_BUTTON_COLORS: ["#4d2b0f", "#494d0f", "#214d0f", "#4d0f2d", "#0f164d", "#073b31", "#0f4e44"],
   DEFAULT_EVENT_TITLE: "Kegiatan Yayasan",
   API_TOKEN: "cakgup",
   CACHE_SECONDS: 90
@@ -106,7 +108,13 @@ function getPublicLinksCached(username) {
   const cached = cache.get(key);
   if (cached) return JSON.parse(cached);
   setupSheet();
-  const links = getLinks(username, false);
+  let links = getLinks(username, false);
+  if (!links.length && username === CONFIG.DEFAULT_USERNAME) {
+    const legacyUsernames = CONFIG.LEGACY_USERNAMES || [];
+    for (let i = 0; i < legacyUsernames.length && !links.length; i++) {
+      links = getLinks(legacyUsernames[i], false);
+    }
+  }
   cache.put(key, JSON.stringify(links), CONFIG.CACHE_SECONDS);
   return links;
 }
@@ -188,6 +196,7 @@ function getLinks(username, includeInactive) {
   return readRows(getLinksSheet())
     .filter(row => sanitizeUsername(row.username || CONFIG.DEFAULT_USERNAME) === username)
     .filter(row => includeInactive || toBool(row.is_active, true))
+    .map(row => ({ ...row, button_color: normalizeButtonColor(row.button_color || "#1A3A6B") }))
     .sort((a, b) => Number(a.sort_order || 999) - Number(b.sort_order || 999));
 }
 
@@ -256,7 +265,7 @@ function saveLink(body) {
       subtitle: String(body.subtitle || body.description || "").trim(),
       url: url,
       icon: String(body.icon || "link").trim(),
-      button_color: normalizeColor(body.button_color || "#073b31"),
+      button_color: normalizeButtonColor(body.button_color || "#1A3A6B"),
       text_color: normalizeColor(body.text_color || "#FFFFFF"),
       sort_order: Number(body.sort_order || 1),
       is_active: toBool(body.is_active, true),
@@ -424,6 +433,12 @@ function sanitizeUsername(value) {
 
 function isValidUrl(value) { return /^https?:\/\//i.test(String(value || "").trim()); }
 function normalizeColor(value) { const text = String(value || "").trim(); return /^#[0-9a-f]{6}$/i.test(text) ? text : "#FFFFFF"; }
+function normalizeButtonColor(value) {
+  const text = String(value || "").trim();
+  const legacyColors = CONFIG.LEGACY_BUTTON_COLORS || [];
+  if (!text || legacyColors.indexOf(text.toLowerCase()) >= 0) return "#1A3A6B";
+  return /^#[0-9a-f]{6}$/i.test(text) ? text : "#1A3A6B";
+}
 function toBool(value, defaultValue) { if (value === undefined || value === null || value === "") return defaultValue; return value === true || String(value).toLowerCase() === "true" || String(value) === "1"; }
 function makeId(prefix) { return prefix + "_" + Utilities.getUuid().slice(0, 8) + "_" + Date.now(); }
 function getErrorMessage(error) { return error && error.message ? error.message : String(error); }
@@ -437,7 +452,7 @@ function testSetup() {
 function testCreateDefaultLinks() {
   setupSheet();
   const defaults = [
-    ["Tentang Kami", "Mengenal Yayasan Baghasasi", "https://github.com/cakgup", "info", "#073b31", 1],
+    ["Tentang Kami", "Mengenal Yayasan Baghasasi", "https://github.com/cakgup", "info", "#1A3A6B", 1],
     ["Program Kebaikan", "Program dan kegiatan untuk umat", "https://github.com/cakgup", "star", "#b45a15", 2],
     ["Donasi", "Salurkan donasi terbaik Anda", "https://github.com/cakgup", "heart", "#9f1d2d", 3],
     ["Pendaftaran", "Daftar program dan kegiatan", "https://github.com/cakgup", "document", "#5a216b", 4],

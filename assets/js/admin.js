@@ -3,6 +3,7 @@
   const config = window.CAKGUP_MICROSITE_CONFIG || {};
   const BASE_PATH = (config.BASE_PATH || "/u").replace(/\/$/, "");
   const DEFAULT_USERNAME = config.DEFAULT_USERNAME || "baghasasi";
+  const DEFAULT_BUTTON_COLOR = config.DEFAULT_BUTTON_COLOR || "#1A3A6B";
   const $ = (selector) => document.querySelector(selector);
 
   const state = { links: [], slugs: [DEFAULT_USERNAME], currentSlug: DEFAULT_USERNAME, editingId: "", eventTitle: (config.DEFAULT_PROFILE && config.DEFAULT_PROFILE.event_title) || "Kegiatan Yayasan" };
@@ -244,7 +245,7 @@
           </div>
           <div>
             <label class="label" for="linkColorInput">Warna Tombol</label>
-            <input id="linkColorInput" class="input color-input" type="color" value="#0f4e44">
+            <input id="linkColorInput" class="input color-input" type="color" value="${h(DEFAULT_BUTTON_COLOR)}">
           </div>
           <div>
             <label class="label" for="linkSortInput">Urutan</label>
@@ -366,7 +367,7 @@
     root.innerHTML = `<main class="admin-page admin-light"><div class="loading-screen"><div><div class="spinner"></div><p class="login-desc">Memuat daftar link...</p></div></div></main>`;
     try {
       await loadSlugs();
-      const data = await window.CakgupApi.post({ action: "getMicrositeLinks", token: token(), username: state.currentSlug });
+      const data = await loadAdminLinks(state.currentSlug);
       if (!data.success) throw new Error(data.message || "Gagal memuat daftar link.");
       state.currentSlug = normalizeSlug(data.username || state.currentSlug || DEFAULT_USERNAME);
       ensureSlugList(state.currentSlug);
@@ -386,7 +387,7 @@
       subtitle: $("#linkSubtitleInput")?.value.trim() || "",
       url: $("#linkUrlInput")?.value.trim() || "",
       icon: $("#linkIconInput")?.value || "link",
-      button_color: $("#linkColorInput")?.value || "#0f4e44",
+      button_color: $("#linkColorInput")?.value || DEFAULT_BUTTON_COLOR,
       text_color: "#FFFFFF",
       sort_order: Number($("#linkSortInput")?.value || 1),
       is_active: Boolean($("#linkActiveInput")?.checked)
@@ -438,11 +439,45 @@
     const slug = normalizeSlug(state.currentSlug || DEFAULT_USERNAME);
     state.currentSlug = slug;
     ensureSlugList(slug);
-    const data = await window.CakgupApi.post({ action: "getMicrositeLinks", token: token(), username: slug });
+    const data = await loadAdminLinks(slug);
     if (!data.success) throw new Error(data.message || "Gagal memuat daftar link.");
     state.eventTitle = (data.meta && data.meta.event_title) || data.event_title || state.eventTitle || ((config.DEFAULT_PROFILE || {}).event_title || "Kegiatan Yayasan");
     state.links = Array.isArray(data.links) ? data.links : [];
     renderAdminLayout();
+  }
+
+  async function loadAdminLinks(slug) {
+    const requested = normalizeSlug(slug || DEFAULT_USERNAME);
+    const data = await window.CakgupApi.post({ action: "getMicrositeLinks", token: token(), username: requested });
+    if (Array.isArray(data.links) && data.links.length) return data;
+
+    const legacyUsernames = Array.isArray(config.LEGACY_USERNAMES) ? config.LEGACY_USERNAMES : [];
+    for (const legacyUsername of legacyUsernames) {
+      const legacySlug = normalizeSlug(legacyUsername);
+      if (!legacySlug || legacySlug === requested) continue;
+      try {
+        const legacyData = await window.CakgupApi.post({ action: "getMicrositeLinks", token: token(), username: legacySlug });
+        if (legacyData.success && Array.isArray(legacyData.links) && legacyData.links.length) {
+          ensureSlugList(legacySlug);
+          const migratedLinks = legacyData.links.map((link) => ({
+            ...link,
+            username: requested
+          }));
+          return {
+            ...data,
+            success: true,
+            migratedFrom: legacySlug,
+            links: migratedLinks,
+            meta: data.meta || legacyData.meta,
+            event_title: data.event_title || legacyData.event_title,
+            username: requested
+          };
+        }
+      } catch (error) {
+        // Abaikan fallback slug lama jika gagal.
+      }
+    }
+    return data;
   }
 
 
@@ -500,7 +535,7 @@
     $("#linkSubtitleInput").value = link.subtitle || "";
     $("#linkUrlInput").value = link.url || "";
     $("#linkIconInput").value = link.icon || "link";
-    $("#linkColorInput").value = normalizeColor(link.button_color || "#0f4e44");
+    $("#linkColorInput").value = normalizeColor(link.button_color || DEFAULT_BUTTON_COLOR);
     $("#linkSortInput").value = link.sort_order || 1;
     $("#linkActiveInput").checked = !(link.is_active === false || String(link.is_active).toLowerCase() === "false");
     $("#linkMessage").className = "message";
@@ -521,7 +556,7 @@
         action: "saveMicrositeLink",
         token: token(),
         ...link,
-        username: link.username || normalizeSlug(state.currentSlug || DEFAULT_USERNAME),
+        username: normalizeSlug(state.currentSlug || DEFAULT_USERNAME),
         is_active: nextActive
       });
       if (!result.success) throw new Error(result.message || "Gagal memperbarui status link.");
@@ -546,7 +581,7 @@
     state.editingId = "";
     if ($("#linkIdInput")) $("#linkIdInput").value = "";
     $("#linkForm")?.reset();
-    if ($("#linkColorInput")) $("#linkColorInput").value = "#0f4e44";
+    if ($("#linkColorInput")) $("#linkColorInput").value = DEFAULT_BUTTON_COLOR;
     if ($("#linkSortInput")) $("#linkSortInput").value = String((state.links || []).length + 1);
     if ($("#linkActiveInput")) $("#linkActiveInput").checked = true;
     if (clearMessage && $("#linkMessage")) $("#linkMessage").className = "message hidden";
@@ -555,7 +590,9 @@
 
   function normalizeColor(value) {
     const text = String(value || "").trim();
-    return /^#[0-9a-f]{6}$/i.test(text) ? text : "#0f4e44";
+    const legacyColors = Array.isArray(config.LEGACY_BUTTON_COLORS) ? config.LEGACY_BUTTON_COLORS.map((item) => String(item).toLowerCase()) : [];
+    if (!text || legacyColors.includes(text.toLowerCase())) return DEFAULT_BUTTON_COLOR;
+    return /^#[0-9a-f]{6}$/i.test(text) ? text : DEFAULT_BUTTON_COLOR;
   }
 
   function updatePreview() {

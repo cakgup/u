@@ -2,11 +2,14 @@ window.CAKGUP_MICROSITE_CONFIG = {
   APP_NAME: "Microsite Yayasan Baghasasi",
   BASE_PATH: "/u",
   DEFAULT_USERNAME: "baghasasi",
+  LEGACY_USERNAMES: ["yimg"],
   API_BASE_URL: "https://script.google.com/macros/s/AKfycbybAACwBMZeiOERkFpZruMwgVWpmB45ddToZMScbGOPOJY2DRS0cfdBLJtHgaDnxxDzjw/exec",
   SESSION_KEY: "cakgup_baghasasi_admin_session",
   API_TOKEN_SESSION_KEY: "cakgup_baghasasi_api_token",
   FETCH_TIMEOUT_MS: 12000,
   PUBLIC_FALLBACK_ENABLED: true,
+  DEFAULT_BUTTON_COLOR: "#1A3A6B",
+  LEGACY_BUTTON_COLORS: ["#4d2b0f", "#494d0f", "#214d0f", "#4d0f2d", "#0f164d", "#073b31", "#0f4e44"],
   PRAYER_SCHEDULE: {
     enabled: true,
     title: "Waktu Shalat",
@@ -35,7 +38,7 @@ window.CAKGUP_MICROSITE_CONFIG = {
     snow_enabled: true
   },
   DEFAULT_LINKS: [
-    { id: "demo-1", title: "Tentang Kami", subtitle: "Mengenal Yayasan Baghasasi", url: "https://example.com", icon: "mosque", button_color: "#073b31", text_color: "#ffffff", sort_order: 1, is_active: true },
+    { id: "demo-1", title: "Tentang Kami", subtitle: "Mengenal Yayasan Baghasasi", url: "https://example.com", icon: "mosque", button_color: "#1A3A6B", text_color: "#ffffff", sort_order: 1, is_active: true },
     { id: "demo-2", title: "Program Kebaikan", subtitle: "Program dan kegiatan untuk umat", url: "https://example.com", icon: "program", button_color: "#d76a00", text_color: "#ffffff", sort_order: 2, is_active: true },
     { id: "demo-3", title: "Donasi", subtitle: "Salurkan donasi terbaik Anda", url: "https://example.com", icon: "donate", button_color: "#b30f21", text_color: "#ffffff", sort_order: 3, is_active: true },
     { id: "demo-4", title: "Pendaftaran", subtitle: "Daftar program dan kegiatan", url: "https://example.com", icon: "form", button_color: "#5a176d", text_color: "#ffffff", sort_order: 4, is_active: true },

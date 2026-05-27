@@ -2167,3 +2167,68 @@ img { max-width: 100%; display: block; }
 .prayer-city[data-city="dki"]::after {
   content: "Kota Bekasi dan Sekitarnya";
 }
+
+/* v19: final palette alignment for inner public card */
+.hero-panel {
+  background:
+    linear-gradient(135deg, rgba(255,202,26,.13) 0 14%, transparent 14% 100%),
+    linear-gradient(225deg, rgba(37,82,143,.44) 0 18%, transparent 18% 100%),
+    linear-gradient(180deg, rgba(26,58,107,.92), rgba(8,26,51,.97)),
+    linear-gradient(90deg, rgba(255,255,255,.035), rgba(255,255,255,0)) !important;
+  border-color: rgba(255,202,26,.24) !important;
+}
+
+.ornament-left {
+  background:
+    linear-gradient(180deg, rgba(255,202,26,.34), rgba(255,202,26,0) 28%),
+    linear-gradient(180deg, rgba(26,58,107,0) 0 28%, rgba(37,82,143,.64) 28% 62%, rgba(0,0,0,0) 62%),
+    linear-gradient(180deg, rgba(0,0,0,0) 0 62%, rgba(8,26,51,.84) 62% 100%) !important;
+}
+
+.ornament-right {
+  background:
+    linear-gradient(180deg, rgba(255,202,26,.34), rgba(255,202,26,0) 28%),
+    linear-gradient(180deg, rgba(26,58,107,0) 0 28%, rgba(37,82,143,.64) 28% 62%, rgba(0,0,0,0) 62%),
+    linear-gradient(180deg, rgba(0,0,0,0) 0 62%, rgba(8,26,51,.84) 62% 100%) !important;
+}
+
+.logo-aura::before {
+  background:
+    radial-gradient(circle at center,
+      rgba(255,202,26,.36) 0%,
+      rgba(255,202,26,.17) 30%,
+      rgba(26,58,107,.08) 58%,
+      transparent 76%) !important;
+}
+
+.admin-moon-button,
+.audio-fab,
+.share-toast,
+.share-fab {
+  background: rgba(16,39,68,.86) !important;
+  border-color: rgba(255,202,26,.28) !important;
+  color: var(--accent) !important;
+}
+
+.prayer-card {
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.025)),
+    rgba(16,39,68,.78) !important;
+  border-color: rgba(255,202,26,.28) !important;
+}
+
+.prayer-next,
+.prayer-chip {
+  background: rgba(8,26,51,.54) !important;
+  border-color: rgba(255,202,26,.16) !important;
+}
+
+.prayer-chip.is-next {
+  background: linear-gradient(180deg, rgba(255,202,26,.22), rgba(255,202,26,.08)) !important;
+  border-color: rgba(255,202,26,.52) !important;
+}
+
+.activity-title span {
+  background: linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.025)), rgba(16,39,68,.78) !important;
+  border-color: rgba(255,202,26,.28) !important;
+}

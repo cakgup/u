@@ -12,7 +12,7 @@
   }
 
   function normalizePathAsset(value, fallback = "") {
-    const text = String(value || "").trim();
+    const text = String(value || "").trim().replace(/logo-yimg\.png$/i, "logo-baghasasi.png");
     if (!text) return fallback;
     if (/^https?:\/\//i.test(text) || text.startsWith("data:")) return text;
     if (text.startsWith("/")) return text;
@@ -50,7 +50,7 @@
   }
 
   function renderMicrositeMarkup(profile = {}, links = [], options = {}) {
-    const p = { ...(config.DEFAULT_PROFILE || {}), ...(profile || {}) };
+    const p = normalizeProfile(profile);
     const logo = normalizePathAsset(p.logo_url, `${BASE_PATH}/assets/img/logo-baghasasi.png`);
     const audioUrl = normalizePathAsset(p.audio_url, `${BASE_PATH}/assets/audio/nasyid.mp3`);
     const activeLinks = cleanLinks(links.length ? links : config.DEFAULT_LINKS || []);
@@ -109,6 +109,20 @@
     `;
   }
 
+  function normalizeProfile(profile = {}) {
+    const defaults = config.DEFAULT_PROFILE || {};
+    return {
+      ...defaults,
+      ...(profile || {}),
+      username: defaults.username || profile.username || config.DEFAULT_USERNAME || "baghasasi",
+      id: defaults.id || profile.id || config.DEFAULT_USERNAME || "baghasasi",
+      microsite_url: defaults.microsite_url || profile.microsite_url,
+      display_name: defaults.display_name || "Yayasan Baghasasi",
+      short_name: defaults.short_name || "Baghasasi",
+      logo_url: defaults.logo_url || `${BASE_PATH}/assets/img/logo-baghasasi.png`
+    };
+  }
+
 
   function renderActivityTitle(profile = {}) {
     const fallback = (config.DEFAULT_PROFILE && config.DEFAULT_PROFILE.event_title) || "";
@@ -122,7 +136,7 @@
   }
 
   function renderLink(link) {
-    const bg = link.button_color || "#073b31";
+    const bg = normalizeButtonColor(link.button_color);
     const text = link.text_color || "#ffffff";
     const subtitle = link.subtitle || link.description || "";
     return `
@@ -135,6 +149,14 @@
         <span class="link-arrow">›</span>
       </a>
     `;
+  }
+
+  function normalizeButtonColor(value) {
+    const color = String(value || "").trim();
+    const fallback = config.DEFAULT_BUTTON_COLOR || "#1A3A6B";
+    const legacyColors = Array.isArray(config.LEGACY_BUTTON_COLORS) ? config.LEGACY_BUTTON_COLORS.map((item) => String(item).toLowerCase()) : [];
+    if (!color || legacyColors.includes(color.toLowerCase())) return fallback;
+    return /^#[0-9a-f]{6}$/i.test(color) ? color : fallback;
   }
 
   function showToast(message) {
@@ -356,7 +378,29 @@
     if (!window.CakgupApi.isConfigured()) {
       return { success: true, demoMode: true, microsite: config.DEFAULT_PROFILE, links: config.DEFAULT_LINKS };
     }
-    return window.CakgupApi.get({ action: "getMicrosite", username: username || config.DEFAULT_USERNAME || "baghasasi" });
+    const requested = username || config.DEFAULT_USERNAME || "baghasasi";
+    const data = await window.CakgupApi.get({ action: "getMicrosite", username: requested });
+    if (Array.isArray(data.links) && data.links.length) return data;
+
+    const legacyUsernames = Array.isArray(config.LEGACY_USERNAMES) ? config.LEGACY_USERNAMES : [];
+    for (const legacyUsername of legacyUsernames) {
+      if (!legacyUsername || legacyUsername === requested) continue;
+      try {
+        const legacyData = await window.CakgupApi.get({ action: "getMicrosite", username: legacyUsername });
+        if (legacyData.success && Array.isArray(legacyData.links) && legacyData.links.length) {
+          return {
+            ...data,
+            success: true,
+            migratedFrom: legacyUsername,
+            microsite: { ...(data.microsite || {}), ...(config.DEFAULT_PROFILE || {}) },
+            links: legacyData.links
+          };
+        }
+      } catch (error) {
+        // Abaikan fallback slug lama jika endpoint gagal.
+      }
+    }
+    return data;
   }
 
   window.CakgupMicrosite = {

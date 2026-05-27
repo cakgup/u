@@ -1,7 +1,7 @@
 (function () {
   const config = window.CAKGUP_MICROSITE_CONFIG || {};
-  const SESSION_KEY = config.SESSION_KEY || "cakgup_yimg_admin_session";
-  const TOKEN_KEY = config.API_TOKEN_SESSION_KEY || "cakgup_yimg_api_token";
+  const SESSION_KEY = config.SESSION_KEY || "cakgup_baghasasi_admin_session";
+  const TOKEN_KEY = config.API_TOKEN_SESSION_KEY || "cakgup_baghasasi_api_token";
 
   function getToken() { return sessionStorage.getItem(TOKEN_KEY) || ""; }
   function isLoggedIn() { return sessionStorage.getItem(SESSION_KEY) === "1" && Boolean(getToken()); }

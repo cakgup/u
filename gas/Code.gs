@@ -9,7 +9,7 @@ const CONFIG = {
   SHEET_LINKS: "microsite_links",
   SHEET_META: "microsite_meta",
   BASE_MICROSITE_URL: "https://cakgup.github.io/u",
-  DEFAULT_USERNAME: "yimg",
+  DEFAULT_USERNAME: "baghasasi",
   DEFAULT_EVENT_TITLE: "Kegiatan Yayasan",
   API_TOKEN: "cakgup",
   CACHE_SECONDS: 90
@@ -82,12 +82,12 @@ function getStaticProfile(username) {
     id: username,
     username: username,
     microsite_url: CONFIG.BASE_MICROSITE_URL + "/" + username,
-    display_name: "Yayasan Indonesia Maju Gemilang",
-    short_name: "Indonesia Maju Gemilang",
+    display_name: "Yayasan Baghasasi",
+    short_name: "Baghasasi",
     tagline: "Bersama, Kita Bisa Mewujudkan Kebaikan",
     event_title: meta.event_title || CONFIG.DEFAULT_EVENT_TITLE,
     bio: "Hadir sebagai ruang kolaborasi kebaikan untuk memberdayakan umat, menebar manfaat, dan membangun masa depan yang gemilang dengan semangat kebersamaan.",
-    logo_url: "/u/assets/img/logo-yimg.png",
+    logo_url: "/u/assets/img/logo-baghasasi.png",
     islamic_script: "وَتَعَاوَنُوا عَلَى الْبِرِّ وَالتَّقْوَى",
     islamic_translation: "Dan tolong-menolonglah kamu dalam kebajikan dan takwa.",
     audio_url: "/u/assets/audio/nasyid.mp3",
@@ -437,7 +437,7 @@ function testSetup() {
 function testCreateDefaultLinks() {
   setupSheet();
   const defaults = [
-    ["Tentang Kami", "Mengenal Yayasan Indonesia Maju Gemilang", "https://github.com/cakgup", "info", "#073b31", 1],
+    ["Tentang Kami", "Mengenal Yayasan Baghasasi", "https://github.com/cakgup", "info", "#073b31", 1],
     ["Program Kebaikan", "Program dan kegiatan untuk umat", "https://github.com/cakgup", "star", "#b45a15", 2],
     ["Donasi", "Salurkan donasi terbaik Anda", "https://github.com/cakgup", "heart", "#9f1d2d", 3],
     ["Pendaftaran", "Daftar program dan kegiatan", "https://github.com/cakgup", "document", "#5a216b", 4],

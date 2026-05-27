@@ -1,7 +1,7 @@
 (function () {
   const config = window.CAKGUP_MICROSITE_CONFIG || {};
   const BASE_PATH = (config.BASE_PATH || "/u").replace(/\/$/, "");
-  const DEFAULT_USERNAME = config.DEFAULT_USERNAME || "yimg";
+  const DEFAULT_USERNAME = config.DEFAULT_USERNAME || "baghasasi";
   const loadedScripts = new Set();
 
   function normalizeUsername(value) {
@@ -84,7 +84,7 @@
     root.innerHTML = `
       <main class="admin-page">
         <section class="panel login-card">
-          <img class="login-logo" src="${BASE_PATH}/assets/img/logo-yimg.png" alt="Logo YIMG">
+          <img class="login-logo" src="${BASE_PATH}/assets/img/logo-baghasasi.png" alt="Logo Baghasasi">
           <h1 class="login-title gradient-text">Cek API Microsite</h1>
           <p class="login-desc">Memvalidasi koneksi frontend ke Google Apps Script.</p>
           <div id="diagnosticsResult" class="message">Menjalankan pengecekan...</div>

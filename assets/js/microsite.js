@@ -51,21 +51,21 @@
 
   function renderMicrositeMarkup(profile = {}, links = [], options = {}) {
     const p = { ...(config.DEFAULT_PROFILE || {}), ...(profile || {}) };
-    const logo = normalizePathAsset(p.logo_url, `${BASE_PATH}/assets/img/logo-yimg.png`);
+    const logo = normalizePathAsset(p.logo_url, `${BASE_PATH}/assets/img/logo-baghasasi.png`);
     const audioUrl = normalizePathAsset(p.audio_url, `${BASE_PATH}/assets/audio/nasyid.mp3`);
     const activeLinks = cleanLinks(links.length ? links : config.DEFAULT_LINKS || []);
-    const publicUrl = p.microsite_url || `${location.origin}${BASE_PATH}/${p.username || config.DEFAULT_USERNAME || "yimg"}`;
+    const publicUrl = p.microsite_url || `${location.origin}${BASE_PATH}/${p.username || config.DEFAULT_USERNAME || "baghasasi"}`;
 
     return `
       <main class="public-page">
-        <section class="stage" aria-label="Microsite Yayasan Indonesia Maju Gemilang">
+        <section class="stage" aria-label="Microsite Yayasan Baghasasi">
           <div class="turkish-frame" aria-hidden="true"></div>
           <section class="hero-panel">
             <div class="hero-ornament ornament-left" aria-hidden="true"></div>
             <div class="hero-ornament ornament-right" aria-hidden="true"></div>
             <a class="lantern lantern-right admin-moon-button" href="${BASE_PATH}/admin" aria-label="Login admin" title="Admin">☾</a>
             <div class="logo-aura">
-              <img class="brand-logo" src="${escapeHtml(logo)}" alt="Logo Yayasan Indonesia Maju Gemilang" loading="eager">
+              <img class="brand-logo" src="${escapeHtml(logo)}" alt="Logo Yayasan Baghasasi" loading="eager">
             </div>
             <section id="prayerSchedule" class="prayer-card" aria-label="Jadwal shalat Kota Bekasi dan sekitarnya">
               <p class="prayer-kicker">Waktu Shalat untuk Daerah</p>
@@ -356,7 +356,7 @@
     if (!window.CakgupApi.isConfigured()) {
       return { success: true, demoMode: true, microsite: config.DEFAULT_PROFILE, links: config.DEFAULT_LINKS };
     }
-    return window.CakgupApi.get({ action: "getMicrosite", username: username || config.DEFAULT_USERNAME || "yimg" });
+    return window.CakgupApi.get({ action: "getMicrosite", username: username || config.DEFAULT_USERNAME || "baghasasi" });
   }
 
   window.CakgupMicrosite = {

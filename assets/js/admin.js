@@ -2,7 +2,7 @@
 (function () {
   const config = window.CAKGUP_MICROSITE_CONFIG || {};
   const BASE_PATH = (config.BASE_PATH || "/u").replace(/\/$/, "");
-  const DEFAULT_USERNAME = config.DEFAULT_USERNAME || "yimg";
+  const DEFAULT_USERNAME = config.DEFAULT_USERNAME || "baghasasi";
   const $ = (selector) => document.querySelector(selector);
 
   const state = { links: [], slugs: [DEFAULT_USERNAME], currentSlug: DEFAULT_USERNAME, editingId: "", eventTitle: (config.DEFAULT_PROFILE && config.DEFAULT_PROFILE.event_title) || "Kegiatan Yayasan" };
@@ -46,7 +46,7 @@
       <main class="admin-page admin-light">
         <section class="admin-login-card">
           <div class="admin-login-brand">
-            <img src="${BASE_PATH}/assets/img/logo-yimg.png" alt="Logo Yayasan Indonesia Maju Gemilang">
+            <img src="${BASE_PATH}/assets/img/logo-baghasasi.png" alt="Logo Yayasan Baghasasi">
           </div>
           <p class="eyebrow">Microsite Admin</p>
           <h1>Kelola Link Yayasan</h1>
@@ -94,7 +94,7 @@
         <div class="admin-shell admin-reference-shell">
           <header class="admin-reference-header">
             <div class="admin-reference-brand">
-              <img src="${BASE_PATH}/assets/img/logo-yimg.png" alt="Logo YIMG">
+              <img src="${BASE_PATH}/assets/img/logo-baghasasi.png" alt="Logo Baghasasi">
               <div>
                 <p class="eyebrow">Dashboard Admin</p>
                 <h1>Kelola Tombol Link Microsite</h1>

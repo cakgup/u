@@ -1,7 +1,7 @@
-# 🌙 CakGup Microsite — Yayasan Indonesia Maju Gemilang
+# 🌙 CakGup Microsite — Yayasan Baghasasi
 
 <p align="center">
-  <img src="assets/img/logo-yimg.png" alt="Logo Yayasan Indonesia Maju Gemilang" width="120" />
+  <img src="assets/img/logo-baghasasi.png" alt="Logo Yayasan Baghasasi" width="120" />
 </p>
 
 <p align="center">
@@ -19,7 +19,7 @@
 
 ## ✨ Tentang Aplikasi
 
-**CakGup Microsite** adalah aplikasi microsite sederhana berbasis **GitHub Pages** dan **Google Apps Script** yang dibuat untuk memudahkan Yayasan Indonesia Maju Gemilang dalam menyajikan berbagai link penting dalam satu halaman.
+**CakGup Microsite** adalah aplikasi microsite sederhana berbasis **GitHub Pages** dan **Google Apps Script** yang dibuat untuk memudahkan Yayasan Baghasasi dalam menyajikan berbagai link penting dalam satu halaman.
 
 Aplikasi ini cocok digunakan untuk:
 
@@ -48,7 +48,7 @@ Microsite ini dibangun dengan semangat gotong royong digital: sederhana, mudah d
 ### 🌐 Halaman Publik Microsite
 
 - Tampilan bernuansa Islami dengan ornamen visual yang lembut.
-- Profil Yayasan Indonesia Maju Gemilang.
+- Profil Yayasan Baghasasi.
 - Logo yayasan dengan animasi.
 - Tagline dan narasi singkat yayasan.
 - Teks ayat/hikmah Islami.
@@ -88,7 +88,7 @@ Fitur admin:
 Aplikasi mendukung banyak slug, misalnya:
 
 ```text
-https://cakgup.github.io/u/yimg
+https://cakgup.github.io/u/baghasasi
 https://cakgup.github.io/u/kegiatan-ramadhan
 https://cakgup.github.io/u/donasi
 https://cakgup.github.io/u/seminar
@@ -159,7 +159,7 @@ u/
 │   │   ├── admin.js
 │   │   └── app.js
 │   ├── img/
-│   │   └── logo-yimg.png
+│   │   └── logo-baghasasi.png
 │   └── audio/
 │       └── nasyid.mp3
 └── gas/
@@ -175,13 +175,13 @@ u/
 Contoh halaman utama:
 
 ```text
-https://cakgup.github.io/u/yimg
+https://cakgup.github.io/u/baghasasi
 ```
 
 Jika slug tidak ditentukan, aplikasi akan menggunakan slug default:
 
 ```text
-yimg
+baghasasi
 ```
 
 ### 2. Masuk ke Dashboard Admin
@@ -251,12 +251,12 @@ Contoh konfigurasi penting:
 
 ```javascript
 window.CAKGUP_MICROSITE_CONFIG = {
-  APP_NAME: "Microsite Yayasan Indonesia Maju Gemilang",
+  APP_NAME: "Microsite Yayasan Baghasasi",
   BASE_PATH: "/u",
-  DEFAULT_USERNAME: "yimg",
+  DEFAULT_USERNAME: "baghasasi",
   API_BASE_URL: "PASTE_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE",
-  SESSION_KEY: "cakgup_yimg_admin_session",
-  API_TOKEN_SESSION_KEY: "cakgup_yimg_api_token",
+  SESSION_KEY: "cakgup_baghasasi_admin_session",
+  API_TOKEN_SESSION_KEY: "cakgup_baghasasi_api_token",
   FETCH_TIMEOUT_MS: 12000
 };
 ```
@@ -391,7 +391,7 @@ Langkah duplikasi:
 3. Ubah `BASE_PATH` di `assets/js/config.js`.
 4. Ganti logo pada:
    ```text
-   assets/img/logo-yimg.png
+   assets/img/logo-baghasasi.png
    ```
 5. Ganti audio nasyid pada:
    ```text
@@ -620,6 +620,6 @@ Jika ingin aplikasi ini dapat digunakan dan diduplikasi secara luas untuk kepent
 Semoga bermanfaat.
 
 <p align="center">
-  <strong>Yayasan Indonesia Maju Gemilang</strong><br/>
+  <strong>Yayasan Baghasasi</strong><br/>
   Bersama, Kita Bisa Mewujudkan Kebaikan
 </p>

@@ -1,10 +1,10 @@
 window.CAKGUP_MICROSITE_CONFIG = {
-  APP_NAME: "Microsite Yayasan Indonesia Maju Gemilang",
+  APP_NAME: "Microsite Yayasan Baghasasi",
   BASE_PATH: "/u",
-  DEFAULT_USERNAME: "yimg",
+  DEFAULT_USERNAME: "baghasasi",
   API_BASE_URL: "https://script.google.com/macros/s/AKfycbybAACwBMZeiOERkFpZruMwgVWpmB45ddToZMScbGOPOJY2DRS0cfdBLJtHgaDnxxDzjw/exec",
-  SESSION_KEY: "cakgup_yimg_admin_session",
-  API_TOKEN_SESSION_KEY: "cakgup_yimg_api_token",
+  SESSION_KEY: "cakgup_baghasasi_admin_session",
+  API_TOKEN_SESSION_KEY: "cakgup_baghasasi_api_token",
   FETCH_TIMEOUT_MS: 12000,
   PUBLIC_FALLBACK_ENABLED: true,
   PRAYER_SCHEDULE: {
@@ -13,18 +13,18 @@ window.CAKGUP_MICROSITE_CONFIG = {
     city: "Kota Bekasi dan Sekitarnya",
     timezone: "Asia/Jakarta",
     api_base_url: "https://api.myquran.com/v2/sholat/jadwal/1301",
-    cache_key: "cakgup_yimg_prayer_schedule"
+    cache_key: "cakgup_baghasasi_prayer_schedule"
   },
   DEFAULT_PROFILE: {
-    id: "yimg",
-    username: "yimg",
-    microsite_url: "https://cakgup.github.io/u/yimg",
-    display_name: "Yayasan Indonesia Maju Gemilang",
-    short_name: "Indonesia Maju Gemilang",
+    id: "baghasasi",
+    username: "baghasasi",
+    microsite_url: "https://cakgup.github.io/u/baghasasi",
+    display_name: "Yayasan Baghasasi",
+    short_name: "Baghasasi",
     tagline: "Bersama, Kita Bisa Mewujudkan Kebaikan",
     event_title: "Kegiatan Yayasan",
     bio: "Hadir sebagai ruang kolaborasi kebaikan untuk memberdayakan umat, menebar manfaat, dan membangun masa depan yang gemilang dengan semangat kebersamaan.",
-    logo_url: "/u/assets/img/logo-yimg.png",
+    logo_url: "/u/assets/img/logo-baghasasi.png",
     islamic_script: "وَتَعَاوَنُوا عَلَى الْبِرِّ وَالتَّقْوَى",
     islamic_translation: "Dan tolong-menolonglah kamu dalam kebajikan dan takwa.",
     audio_url: "/u/assets/audio/nasyid.mp3",
@@ -35,7 +35,7 @@ window.CAKGUP_MICROSITE_CONFIG = {
     snow_enabled: true
   },
   DEFAULT_LINKS: [
-    { id: "demo-1", title: "Tentang Kami", subtitle: "Mengenal Yayasan Indonesia Maju Gemilang", url: "https://example.com", icon: "mosque", button_color: "#073b31", text_color: "#ffffff", sort_order: 1, is_active: true },
+    { id: "demo-1", title: "Tentang Kami", subtitle: "Mengenal Yayasan Baghasasi", url: "https://example.com", icon: "mosque", button_color: "#073b31", text_color: "#ffffff", sort_order: 1, is_active: true },
     { id: "demo-2", title: "Program Kebaikan", subtitle: "Program dan kegiatan untuk umat", url: "https://example.com", icon: "program", button_color: "#d76a00", text_color: "#ffffff", sort_order: 2, is_active: true },
     { id: "demo-3", title: "Donasi", subtitle: "Salurkan donasi terbaik Anda", url: "https://example.com", icon: "donate", button_color: "#b30f21", text_color: "#ffffff", sort_order: 3, is_active: true },
     { id: "demo-4", title: "Pendaftaran", subtitle: "Daftar program dan kegiatan", url: "https://example.com", icon: "form", button_color: "#5a176d", text_color: "#ffffff", sort_order: 4, is_active: true },

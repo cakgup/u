@@ -1,0 +1,27 @@
+pages:
+  stage: deploy
+  image: alpine:latest
+  script:
+    - mkdir -p public/u
+    - cp -r .nojekyll 404.html index.html PERFORMANCE_NOTES.md README.md assets gas public/u/
+    - |
+      cat > public/index.html <<'HTML'
+      <!doctype html>
+      <html lang="id">
+      <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta http-equiv="refresh" content="0; url=/u/">
+        <title>Mengalihkan...</title>
+        <link rel="canonical" href="/u/">
+      </head>
+      <body>
+        <p>Mengalihkan ke <a href="/u/">/u/</a>.</p>
+      </body>
+      </html>
+      HTML
+  artifacts:
+    paths:
+      - public
+  rules:
+    - if: '$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH'

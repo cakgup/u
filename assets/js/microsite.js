@@ -15,6 +15,7 @@
     const text = String(value || "").trim().replace(/logo-yimg\.png$/i, "logo-baghasasi.png");
     if (!text) return fallback;
     if (/^https?:\/\//i.test(text) || text.startsWith("data:")) return text;
+    if (text.startsWith("/u/") && BASE_PATH !== "/u") return text.replace(/^\/u\//, "assets/").replace(/^assets\/assets\//, "assets/");
     if (text.startsWith("/")) return text;
     return `${BASE_PATH}/${text.replace(/^\.\//, "")}`.replace(/^\/\//, "/");
   }

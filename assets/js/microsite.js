@@ -1,6 +1,6 @@
 (function () {
   const config = window.CAKGUP_MICROSITE_CONFIG || {};
-  const BASE_PATH = (config.BASE_PATH || "/u").replace(/\/$/, "");
+  const BASE_PATH = String(config.BASE_PATH ?? "/u").replace(/\/$/, "");
 
   function escapeHtml(value) {
     return String(value ?? "")
@@ -16,7 +16,7 @@
     if (!text) return fallback;
     if (/^https?:\/\//i.test(text) || text.startsWith("data:")) return text;
     if (text.startsWith("/")) return text;
-    return `${BASE_PATH}/${text.replace(/^\.\//, "")}`;
+    return `${BASE_PATH}/${text.replace(/^\.\//, "")}`.replace(/^\/\//, "/");
   }
 
   function iconFor(name) {

@@ -1,6 +1,8 @@
+const CAKGUP_BASE_PATH = window.location.pathname.split("/").filter(Boolean)[0] === "u" ? "/u" : "";
+
 window.CAKGUP_MICROSITE_CONFIG = {
   APP_NAME: "Microsite Yayasan Baghasasi",
-  BASE_PATH: "/u",
+  BASE_PATH: CAKGUP_BASE_PATH,
   DEFAULT_USERNAME: "baghasasi",
   LEGACY_USERNAMES: ["yimg"],
   API_BASE_URL: "https://script.google.com/macros/s/AKfycbybAACwBMZeiOERkFpZruMwgVWpmB45ddToZMScbGOPOJY2DRS0cfdBLJtHgaDnxxDzjw/exec",
@@ -27,10 +29,10 @@ window.CAKGUP_MICROSITE_CONFIG = {
     tagline: "Bersama, Kita Bisa Mewujudkan Kebaikan",
     event_title: "Kegiatan Yayasan",
     bio: "Hadir sebagai ruang kolaborasi kebaikan untuk memberdayakan umat, menebar manfaat, dan membangun masa depan yang gemilang dengan semangat kebersamaan.",
-    logo_url: "/u/assets/img/logo-baghasasi.png",
+    logo_url: "assets/img/logo-baghasasi.png",
     islamic_script: "وَتَعَاوَنُوا عَلَى الْبِرِّ وَالتَّقْوَى",
     islamic_translation: "Dan tolong-menolonglah kamu dalam kebajikan dan takwa.",
-    audio_url: "/u/assets/audio/nasyid.mp3",
+    audio_url: "assets/audio/nasyid.mp3",
     audio_enabled: true,
     audio_loop: true,
     audio_volume: 0.34,

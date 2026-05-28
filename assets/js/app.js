@@ -1,6 +1,6 @@
 (function () {
   const config = window.CAKGUP_MICROSITE_CONFIG || {};
-  const BASE_PATH = (config.BASE_PATH || "/u").replace(/\/$/, "");
+  const BASE_PATH = String(config.BASE_PATH ?? "/u").replace(/\/$/, "");
   const DEFAULT_USERNAME = config.DEFAULT_USERNAME || "baghasasi";
   const loadedScripts = new Set();
 
@@ -13,7 +13,7 @@
     const parts = path.split("/").filter(Boolean);
     const baseName = BASE_PATH.replace("/", "");
 
-    if (parts[0] === baseName) {
+    if (baseName && parts[0] === baseName) {
       const second = parts[1] || "";
       if (!second || second === "index.html" || second === "404.html") return { type: "public", username: DEFAULT_USERNAME };
       if (second === "admin") return { type: "admin" };

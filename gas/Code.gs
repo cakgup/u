@@ -309,15 +309,23 @@ function setupSheet() {
 }
 
 function getSpreadsheet() {
-  if (CONFIG.SPREADSHEET_ID) return SpreadsheetApp.openById(CONFIG.SPREADSHEET_ID);
+  if (CONFIG.SPREADSHEET_ID && !isPlaceholderSpreadsheetId(CONFIG.SPREADSHEET_ID)) {
+    return SpreadsheetApp.openById(CONFIG.SPREADSHEET_ID);
+  }
   const props = PropertiesService.getScriptProperties();
   const storedId = props.getProperty(PROP_SPREADSHEET_ID);
-  if (storedId) return SpreadsheetApp.openById(storedId);
+  if (storedId && !isPlaceholderSpreadsheetId(storedId)) return SpreadsheetApp.openById(storedId);
+  if (storedId) props.deleteProperty(PROP_SPREADSHEET_ID);
   const active = SpreadsheetApp.getActiveSpreadsheet();
   if (active) return active;
   const created = SpreadsheetApp.create("CakGup Microsite - Database Link");
   props.setProperty(PROP_SPREADSHEET_ID, created.getId());
   return created;
+}
+
+function isPlaceholderSpreadsheetId(value) {
+  const text = String(value || "").trim();
+  return !text || text === "CEK_EXEL_ID" || text === "ID_SPREADSHEET_ANDA" || text.indexOf("PASTE_") === 0;
 }
 
 function getLinksSheet() {

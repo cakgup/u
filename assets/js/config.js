@@ -9,7 +9,7 @@ window.CAKGUP_MICROSITE_CONFIG = {
   SESSION_KEY: "cakgup_baghasasi_admin_session",
   API_TOKEN_SESSION_KEY: "cakgup_baghasasi_api_token",
   FETCH_TIMEOUT_MS: 12000,
-  PUBLIC_FALLBACK_ENABLED: true,
+  PUBLIC_FALLBACK_ENABLED: false,
   DEFAULT_BUTTON_COLOR: "#1A3A6B",
   LEGACY_BUTTON_COLORS: ["#4d2b0f", "#494d0f", "#214d0f", "#4d0f2d", "#0f164d", "#073b31", "#0f4e44"],
   PRAYER_SCHEDULE: {

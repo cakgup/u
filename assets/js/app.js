@@ -50,6 +50,19 @@
     `;
   }
 
+  function assetPath(path) {
+    return `${BASE_PATH}/${String(path || "").replace(/^\//, "")}`.replace(/^\/\//, "/").replace(/^\/assets/, "assets");
+  }
+
+  function escapeHtml(value) {
+    return String(value ?? "")
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;")
+      .replaceAll('"', "&quot;")
+      .replaceAll("'", "&#039;");
+  }
+
   function renderPublic(profile, links, options = {}) {
     document.title = profile.display_name || config.APP_NAME || "CakGup Microsite";
     const root = document.getElementById("app");
@@ -58,7 +71,26 @@
   }
 
   function renderFallback(reason = "") {
-    renderPublic(config.DEFAULT_PROFILE, config.DEFAULT_LINKS || [], { fallbackMode: false });
+    if (config.PUBLIC_FALLBACK_ENABLED === true) {
+      renderPublic(config.DEFAULT_PROFILE, config.DEFAULT_LINKS || [], { fallbackMode: true });
+      return;
+    }
+
+    const root = document.getElementById("app");
+    root.innerHTML = `
+      <main class="loading-screen">
+        <section class="panel login-card">
+          <img class="login-logo" src="${assetPath("assets/img/logo-baghasasi.png")}" alt="Logo Baghasasi">
+          <h1 class="login-title gradient-text">Data API belum tersedia</h1>
+          <p class="login-desc">Halaman ini belum bisa memuat link dari Google Apps Script.</p>
+          <div class="message message-error">${escapeHtml(reason || "API gagal memuat data microsite.")}</div>
+          <div class="button-row admin-actions">
+            <a class="outline-button" href="${BASE_PATH}/cek-api">Cek API</a>
+            <a class="primary-button" href="${BASE_PATH}/admin">Admin</a>
+          </div>
+        </section>
+      </main>
+    `;
   }
 
   async function showPublic(username) {
